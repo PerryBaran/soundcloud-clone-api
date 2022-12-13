@@ -6,7 +6,6 @@ Implements Test-Driven development using Mocha and Chai.
 
 Created as part of the Manchester Codes full-stack web development boot-camp.
 
-
 ## Table of Contents
 
 1. [Dependencies](#dependencies)
@@ -20,6 +19,9 @@ Created as part of the Manchester Codes full-stack web development boot-camp.
 - [Express.js](https://expressjs.com/)
 - [Sequelize](https://sequelize.org/)
 - [PostgreSQL](https://www.postgresql.org/)
+- [Bycrypt](https://www.npmjs.com/package/bcrypt)
+- [JSONwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+- [Cookie-Parser](https://www.npmjs.com/package/cookie-parser)
 
 ### Dev Dependencies
 
@@ -59,7 +61,8 @@ PGHOST=localhost
 PGPASSWORD=password
 PGDATABASE=music_library_dev
 PGPORT=5432
-PORT=3000
+PORT=4000
+SECRETKEY=[random string of characters]
 ```
 
 Create a `.env.test` file in the root of the repo with the following values:
@@ -70,7 +73,8 @@ PGHOST=localhost
 PGPASSWORD=password
 PGDATABASE=music_library_test
 PGPORT=5432
-PORT=3000
+PORT=4000
+SECRETKEY=[random string of characters]
 ```
 
 ## Commands

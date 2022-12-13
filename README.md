@@ -49,6 +49,29 @@ $ docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -d postg
 
 ### Environment variables
 
+You will need to create a file to store your environment variables. These credentials allow you to connect to the database. Two environments will need to be created, one for production and one for testing.
+
+Create a `.env` file in the root of the repo with the following values:
+
+```
+PGUSER=postgres
+PGHOST=localhost
+PGPASSWORD=password
+PGDATABASE=music_library_dev
+PGPORT=5432
+PORT=3000
+```
+
+Create a `.env.test` file in the root of the repo with the following values:
+
+```
+PGUSER=postgres
+PGHOST=localhost
+PGPASSWORD=password
+PGDATABASE=music_library_test
+PGPORT=5432
+PORT=3000
+```
 
 ## Commands
 

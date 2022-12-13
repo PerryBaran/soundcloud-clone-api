@@ -6,7 +6,6 @@ Implements Test-Driven development using Mocha and Chai.
 
 Created as part of the Manchester Codes full-stack web development boot-camp.
 
-
 ## Table of Contents
 
 1. [Dependencies](#dependencies)
@@ -20,6 +19,9 @@ Created as part of the Manchester Codes full-stack web development boot-camp.
 - [Express.js](https://expressjs.com/)
 - [Sequelize](https://sequelize.org/)
 - [PostgreSQL](https://www.postgresql.org/)
+- [Bycrypt](https://www.npmjs.com/package/bcrypt)
+- [JSONwebtoken](https://www.npmjs.com/package/jsonwebtoken)
+- [Cookie-Parser](https://www.npmjs.com/package/cookie-parser)
 
 ### Dev Dependencies
 

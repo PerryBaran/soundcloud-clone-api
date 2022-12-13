@@ -61,7 +61,8 @@ PGHOST=localhost
 PGPASSWORD=password
 PGDATABASE=music_library_dev
 PGPORT=5432
-PORT=3000
+PORT=4000
+SECRETKEY=[random string of characters]
 ```
 
 Create a `.env.test` file in the root of the repo with the following values:
@@ -72,7 +73,8 @@ PGHOST=localhost
 PGPASSWORD=password
 PGDATABASE=music_library_test
 PGPORT=5432
-PORT=3000
+PORT=4000
+SECRETKEY=[random string of characters]
 ```
 
 ## Commands

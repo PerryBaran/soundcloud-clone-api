@@ -24,7 +24,7 @@ Created as part of the Manchester Codes full-stack web development boot-camp.
 - [Cookie-Parser](https://www.npmjs.com/package/cookie-parser)
 - [AWS-SDK](https://www.npmjs.com/package/aws-sdk)
 - [Multer](https://www.npmjs.com/package/multer)
-- [uuidv4](https://www.npmjs.com/package/uuidv4)
+- [uuid](https://www.npmjs.com/package/uuid)
 
 ### Dev Dependencies
 

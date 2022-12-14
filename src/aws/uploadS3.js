@@ -1,16 +1,16 @@
 const AWS = require('aws-sdk');
-const { uuid } = require('uuidv4');
+const { v4 } = require('uuid');
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccesKey: process.env.AWS_SECRET_KEY,
+  secretAccessKey: process.env.AWS_SECRET_KEY,
 });
 
-const myBucket = new AWS.S3();
+const myBucket = new AWS.S3()
 
-const uploadFileToS3 = async (file) => {
+const uploadFileToS3 = (file) => {
   return new Promise((resolve, reject) => {
-    const key = uuid();
+    const key = v4();
 
     const params = {
       Body: file.buffer,
@@ -22,8 +22,12 @@ const uploadFileToS3 = async (file) => {
       if (err) {
         reject(err);
       } else {
-        resolve(`${process.env.AWS_BUCKET_URL}/${file.fieldName}/${key}`);
+        resolve(`${process.env.AWS_BUCKET_URL}/${file.fieldname}/${key}`);
       }
     });
   });
 };
+
+module.exports = {
+  uploadFileToS3
+}

@@ -17,6 +17,34 @@ const setupDatabase = () => {
   const Album = AlbumModel(connection, Sequelize);
   const Song = SongModel(connection, Sequelize);
 
+  User.hasMany(Album, {
+    foreignKey: {
+      allowNull: false,
+      validate: {
+        notNull: {
+          args: [true],
+          msg: 'Album must have a User',
+        },
+      },
+    },
+  });
+  Album.belongsTo(User);
+
+  Album.hasMany(Song, {
+    foreignKey: {
+      allowNull: false,
+      validate: {
+        notNull: {
+          args: [true],
+          msg: 'Song must have an Album',
+        },
+      },
+    },
+  });
+  Song.belongsTo(Album);
+
+
+
   connection.sync({ alter: true });
   return {
     User,

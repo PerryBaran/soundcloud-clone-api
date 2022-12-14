@@ -3,9 +3,29 @@ const User = db.User;
 
 const saveUser = async (req, res, next) => {
   try {
+    const { name, email, password } = req.body;
+
+    if (!name) {
+      return res.status(400).send({ error: 'Name must have a value' });
+    }
+
+    if (!email) {
+      return res.status(400).send({ error: 'Email must have a value' });
+    }
+
+    if (!email.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)) {
+      return res.status(400).send({ error: 'Email must be valid' });
+    }
+
+    if (password.length < 8) {
+      return res
+        .status(400)
+        .send({ error: 'Password must be atleast 8 characters long' });
+    }
+
     const username = await User.findOne({
       where: {
-        name: req.body.name,
+        name
       },
     });
 
@@ -15,7 +35,7 @@ const saveUser = async (req, res, next) => {
 
     const emailcheck = await User.findOne({
       where: {
-        email: req.body.email,
+        email
       },
     });
 

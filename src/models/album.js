@@ -15,6 +15,11 @@ module.exports = (connection, DataTypes) => {
         },
       },
     },
+    imageRef: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      allowEmpty: true,
+    },
   };
 
   const scope = {

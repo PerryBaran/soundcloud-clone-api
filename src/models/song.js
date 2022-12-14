@@ -30,10 +30,20 @@ module.exports = (connection, DataTypes) => {
         },
       },
     },
-    imageRef: {
+    position: {
       type: DataTypes.STRING,
-      allowNull: true,
-      allowEmpty: true,
+      allowNull: false,
+      allowEmpty: false,
+      validate: {
+        notNull: {
+          args: true,
+          msg: 'Must provide a song position',
+        },
+        notEmpty: {
+          args: true,
+          msg: 'The provide a song position',
+        },
+      },
     },
   };
 

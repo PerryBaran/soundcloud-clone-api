@@ -2,32 +2,61 @@ const { uploadFileToS3 } = require("../aws/uploadS3");
 const { Album, Song } = require('../models');
 
 const addAlbum = async (req, res) => {
-  const { files } = req;
+  const { files: { image, audio }, body: { albumName, songName, userId } } = req;
   try {
     let imageRef = null;
     const songs = [];
 
-    for (const image of files.image) {
-      imageRef = await uploadFileToS3(image);
+    if (image) {
+      for (const file of image) {
+        imageRef = await uploadFileToS3(file);
+      }      
     }
 
-    for (const audio of files.audio) {
+    if (Array.isArray(audio)) {
+      const { length } = audio;
+
+      for (let i = 0; i < length; i += 1) {
+        const url = await uploadFileToS3(audio[i]);
+        songs.push({
+          name: songName[i],
+          audioRef: url,
+          position: i,
+        });
+      }      
+    } else {
       const url = await uploadFileToS3(audio);
       songs.push({
-        name: audio.originalname.split('.')[0],
-        audioRef: url
+        songName,
+        audioRef: url,
+        position: 0
       });
     }
 
-    const data = {
+    const album = await Album.create({
+      name: albumName,
       imageRef,
-      songs
+      UserId: userId,
+    });
+
+    let songResponse = [];
+    for (const { name, audioRef, position } of songs) {
+      const song = await Song.create({
+        name,
+        audioRef,
+        position,
+        AlbumId: album.id
+      });
+
+      songResponse.push(song);
     }
 
-    res.status(200).send(data);
+    const response = { album, songResponse };
+
+    res.status(200).send(response);
   } catch (err) {
     console.error(err);
-    res.status(500).send({ error: err.message ? `Error: ${err.message}` : 'Unexpted Error'})
+    res.status(500).send({ error: err.message ? `Error: ${err.message}` : 'Unexpted Error' })
   }
 };
 

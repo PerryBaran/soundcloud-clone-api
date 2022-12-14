@@ -1,9 +1,8 @@
 const bcrypt = require('bcrypt');
-const db = require('../models');
+const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 
 const EXPIRES_IN = 1 * 24 * 60 * 60 * 1000;
-const User = db.User;
 
 const signup = async (req, res) => {
   try {

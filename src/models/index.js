@@ -43,8 +43,6 @@ const setupDatabase = () => {
   });
   Song.belongsTo(Album);
 
-
-
   connection.sync({ alter: true });
   return {
     User,

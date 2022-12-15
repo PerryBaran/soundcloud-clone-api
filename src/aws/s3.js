@@ -8,21 +8,23 @@ AWS.config.update({
 
 const myBucket = new AWS.S3()
 
-const uploadFileToS3 = (file) => {
+const uploadFileToS3 = (file, userId) => {
+  if (!userId) throw new Error('userId undefined');
+
   return new Promise((resolve, reject) => {
     const key = v4();
 
     const params = {
       Body: file.buffer,
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `${file.fieldname}/${key}`,
+      Key: `${userId}/${key}`,
     };
 
     myBucket.putObject(params, (err) => {
       if (err) {
         reject(err);
       } else {
-        resolve(`${process.env.AWS_BUCKET_URL}/${file.fieldname}/${key}`);
+        resolve(key);
       }
     });
   });

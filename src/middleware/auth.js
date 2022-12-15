@@ -1,7 +1,7 @@
-const db = require('../models');
-const User = db.User;
+const { User } = require('../models');
+const jwt = require('jsonwebtoken');
 
-const saveUser = async (req, res, next) => {
+exports.checkCredentials = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
@@ -50,6 +50,17 @@ const saveUser = async (req, res, next) => {
   }
 };
 
-module.exports = {
-  saveUser,
+exports.authenticateToken = (req, res, next) => {
+  console.log('stub no work')
+  const token = req.headers.usertoken;
+
+  if (!token) return res.sendStatus(401)
+
+  jwt.verify(token, process.env.JWT_SECRETKEY, (err, user) => {
+    if (err) return res.sendStatus(403)
+
+    req.user = user
+
+    next()
+  })
 };

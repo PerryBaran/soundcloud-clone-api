@@ -6,10 +6,10 @@ AWS.config.update({
   secretAccessKey: process.env.AWS_SECRET_KEY,
 });
 
-const myBucket = new AWS.S3()
+const myBucket = new AWS.S3();
 
 const uploadFileToS3 = (file, userId) => {
-  if (!userId) throw new Error('userId undefined');
+  if (!userId) throw new Error('UserId undefined');
 
   return new Promise((resolve, reject) => {
     const key = v4();
@@ -31,5 +31,5 @@ const uploadFileToS3 = (file, userId) => {
 };
 
 module.exports = {
-  uploadFileToS3
-}
+  uploadFileToS3,
+};

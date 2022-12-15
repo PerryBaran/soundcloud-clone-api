@@ -22,6 +22,7 @@ module.exports = (connection, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      allowEmpty: false,
       unique: {
         args: true,
         msg: 'This email is already in use',
@@ -55,5 +56,5 @@ module.exports = (connection, DataTypes) => {
     },
   };
 
-  return connection.define('User', schema, scope);
+  return connection.define('Users', schema, scope);
 };

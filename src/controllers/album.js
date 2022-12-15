@@ -1,10 +1,25 @@
-const { createFile } = require('./helpers');
+const { Album } = require('../models');
+const helpers = require('./helpers');
 
 exports.create = async (req, res) => {
-  const { file, body } = req;
+  try {
+    await helpers.createFile(req, res, 'album');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.delete = async (req, res) => {
+  const {  albumId } = req.params;
 
   try {
-    await createFile(body, file, res, 'album');
+    const { key, UserId } = await Album.findByPk(albumId, {
+      raw: true,
+    });
+
+    const filePath = `${UserId}/${key}`;
+
+    await helpers.delete(filePath, albumId, res, 'album');
   } catch (err) {
     console.error(err);
   }

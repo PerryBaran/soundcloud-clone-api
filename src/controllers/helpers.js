@@ -11,43 +11,47 @@ const getModel = (model) => {
   return models[model];
 };
 
-const getUserId = async (model, data) => {
-  try {
-    switch (model) {
-      case 'album': {
-        const { UserId } = await User.findByPk(data.UserId, {
-          raw: true,
-        });
-        return UserId;
-      }
-      case 'song': {
-        const { UserId } = await Album.findByPk(data.AlbumId, {
-          raw: true,
-        });
-        return UserId;
-      }
-      default:
-        throw new Error('Cannot find User');
-    }
-  } catch (err) {
-    throw new Error('Cannot find User');
-  }
-};
 
-exports.createFile = async (data, file, res, model) => {
-  const Model = getModel(model);
+exports.createFile = async (req, res, model) => {
+  const { file, body, user } = req;
+
   if (!file) return res.status(400).send({ message: 'file required' });
 
+  const Model = getModel(model);
+
   try {
-    const UserId = await getUserId(model, data);
-    const key = await s3.uploadFileToS3(file, UserId);
-    data.key = key;
-    const response = await Model.create(data);
+    const key = await s3.uploadFile(file, user.id);
+    
+    body.key = key;
+
+    if (model === 'album') {
+      body.UserId = user.id;
+    }
+    
+    const response = await Model.create(body);
     res.status(200).send(response);
   } catch (err) {
     if (err.message === 'Cannot find User') {
       return res.status(404).send({ message: err.message });
     }
+    res.status(500).send({
+      message: err.message ? `Error: ${err.message}` : 'Unexpected error',
+    });
+  }
+};
+
+exports.delete = async (filePath, id, res, model) => {
+  const Model = getModel(model);
+  try {
+    await s3.deleteFile(filePath);
+    const deletedRows = await Model.destroy({ where: { id } });
+
+    if (!deletedRows) {
+      res.status(404).json({ message: `The ${model} could not be found.` });
+    } else {
+      res.status(204).send();
+    }
+  } catch (err) {
     res.status(500).send({
       message: err.message ? `Error: ${err.message}` : 'Unexpected error',
     });

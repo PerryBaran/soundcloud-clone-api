@@ -8,7 +8,7 @@ AWS.config.update({
 
 const myBucket = new AWS.S3();
 
-const uploadFileToS3 = (file, userId) => {
+const uploadFile = (file, userId) => {
   if (!userId) throw new Error('UserId undefined');
 
   return new Promise((resolve, reject) => {
@@ -30,6 +30,24 @@ const uploadFileToS3 = (file, userId) => {
   });
 };
 
+const deleteFile = (filePath) => {
+  return new Promise((resolve, reject) => {
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: filePath
+    }
+
+    myBucket.deleteObject(params, (err) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(`${filePath} deleted`)
+      }
+    });
+  });
+}
+
 module.exports = {
-  uploadFileToS3,
+  uploadFile,
+  deleteFile
 };

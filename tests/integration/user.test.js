@@ -9,7 +9,7 @@ describe('/users', () => {
     try {
       await User.sequelize.sync();
     } catch (err) {
-      console.error(err);
+      console.message('that annoying error');
     }
   });
 
@@ -17,7 +17,7 @@ describe('/users', () => {
     try {
       await User.destroy({ where: {} });
     } catch (err) {
-      console.error(err);
+      console.message(err);
     }
   });
 
@@ -63,7 +63,7 @@ describe('/users', () => {
         .send(data);
 
       expect(status).to.equal(400);
-      expect(body.error).to.equal('Name must have a value');
+      expect(body.message).to.equal('Name must have a value');
     });
 
     it('returns 400 if email is empty', async () => {
@@ -77,7 +77,7 @@ describe('/users', () => {
         .send(data);
 
       expect(status).to.equal(400);
-      expect(body.error).to.equal('Email must have a value');
+      expect(body.message).to.equal('Email must have a value');
     });
 
     it('returns 400 if email is not valid', async () => {
@@ -91,7 +91,7 @@ describe('/users', () => {
         .send(data);
 
       expect(status).to.equal(400);
-      expect(body.error).to.equal('Email must be valid');
+      expect(body.message).to.equal('Email must be valid');
     });
 
     it('returns 400 if password is less than 8 characters', async () => {
@@ -105,7 +105,9 @@ describe('/users', () => {
         .send(data);
 
       expect(status).to.equal(400);
-      expect(body.error).to.equal('Password must be atleast 8 characters long');
+      expect(body.message).to.equal(
+        'Password must be atleast 8 characters long'
+      );
     });
 
     it('returns 409 if a user with that name already exists', async () => {
@@ -126,7 +128,7 @@ describe('/users', () => {
         .send(data2);
 
       expect(status).to.equal(409);
-      expect(body.error).to.equal('Username already taken');
+      expect(body.message).to.equal('Username already taken');
     });
 
     it('returns 409 if a user with that email already exists', async () => {
@@ -147,7 +149,7 @@ describe('/users', () => {
         .send(data2);
 
       expect(status).to.equal(409);
-      expect(body.error).to.equal('Authentication failed');
+      expect(body.message).to.equal('Authentication failed');
     });
   });
 
@@ -185,7 +187,7 @@ describe('/users', () => {
         .send(data);
 
       expect(status).to.equal(401);
-      expect(body.error).to.equal('Authentication failed');
+      expect(body.message).to.equal('Authentication failed');
     });
 
     it("returns 401 if the email doesn't exist", async () => {
@@ -199,7 +201,7 @@ describe('/users', () => {
         .send(data);
 
       expect(status).to.equal(401);
-      expect(body.error).to.equal('Authentication failed');
+      expect(body.message).to.equal('Authentication failed');
     });
   });
 });

@@ -30,10 +30,10 @@ const signup = async (req, res) => {
         .cookie('userToken', token, { maxAge: EXPIRES_IN })
         .send(user);
     } else {
-      res.status(409).send({ error: 'Details are not correct' });
+      res.status(409).send({ message: 'Details are not correct' });
     }
   } catch (err) {
-    res.status(500).send({ error: `Server error: ${err.message}` });
+    res.status(500).send({ message: `Server error: ${err.message}` });
   }
 };
 
@@ -59,13 +59,13 @@ const login = async (req, res) => {
           .cookie('userToken', token, { maxAge: EXPIRES_IN })
           .send(user);
       } else {
-        res.status(401).send({ error: 'Authentication failed' });
+        res.status(401).send({ message: 'Authentication failed' });
       }
     } else {
-      res.status(401).send({ error: 'Authentication failed' });
+      res.status(401).send({ message: 'Authentication failed' });
     }
   } catch (err) {
-    res.status(500).send({ error: `Server error: ${err.message}` });
+    res.status(500).send({ message: `Server error: ${err.message}` });
   }
 };
 

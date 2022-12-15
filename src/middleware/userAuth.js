@@ -6,21 +6,21 @@ const saveUser = async (req, res, next) => {
     const { name, email, password } = req.body;
 
     if (!name) {
-      return res.status(400).send({ error: 'Name must have a value' });
+      return res.status(400).send({ message: 'Name must have a value' });
     }
 
     if (!email) {
-      return res.status(400).send({ error: 'Email must have a value' });
+      return res.status(400).send({ message: 'Email must have a value' });
     }
 
     if (!email.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/)) {
-      return res.status(400).send({ error: 'Email must be valid' });
+      return res.status(400).send({ message: 'Email must be valid' });
     }
 
     if (password.length < 8) {
       return res
         .status(400)
-        .send({ error: 'Password must be atleast 8 characters long' });
+        .send({ message: 'Password must be atleast 8 characters long' });
     }
 
     const username = await User.findOne({
@@ -30,7 +30,7 @@ const saveUser = async (req, res, next) => {
     });
 
     if (username) {
-      return res.status(409).send({ error: 'Username already taken' });
+      return res.status(409).send({ message: 'Username already taken' });
     }
 
     const emailcheck = await User.findOne({
@@ -40,13 +40,13 @@ const saveUser = async (req, res, next) => {
     });
 
     if (emailcheck) {
-      return res.status(409).send({ error: 'Authentication failed' });
+      return res.status(409).send({ message: 'Authentication failed' });
     }
 
     next();
   } catch (err) {
-    console.error(err);
-    res.status(500).send({ error: `Server error: ${err.message}` });
+    console.message(err);
+    res.status(500).send({ message: `Server error: ${err.message}` });
   }
 };
 

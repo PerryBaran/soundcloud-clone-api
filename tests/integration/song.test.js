@@ -1,6 +1,5 @@
 const { expect } = require('chai');
 const request = require('supertest');
-const app = require('../../src/app');
 const { Song, Album, User } = require('../../src/models');
 const s3 = require('../../src/aws/s3');
 const sinon = require('sinon');
@@ -9,6 +8,7 @@ describe('/songs', () => {
   const fakeResolve = 'a string';
   let album;
   let validData;
+  let app;
 
   before(async () => {
     try {
@@ -21,7 +21,7 @@ describe('/songs', () => {
   });
 
   beforeEach(async () => {
-    sinon.stub(s3, 'uploadFileToS3').resolves(fakeResolve);
+    sinon.stub(s3, 'uploadFile').resolves(fakeResolve);
 
     try {
       const fakeUserData = {
@@ -41,6 +41,16 @@ describe('/songs', () => {
         position: 0,
         AlbumId: album.id,
       };
+
+      const auth = require('../../src/middleware/auth');
+
+      sinon.stub(auth, 'authenticateToken').callsFake((req, _, next) => {
+        req.user = { id: user.id }
+        console.log(req.user)
+        next();
+      });
+
+      app = require('../../src/app');
     } catch (err) {
       console.error(err);
     }

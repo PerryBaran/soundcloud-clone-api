@@ -15,7 +15,7 @@ module.exports = (connection, DataTypes) => {
         },
       },
     },
-    imageRef: {
+    key: {
       type: DataTypes.STRING,
       allowNull: true,
       allowEmpty: true,
@@ -28,5 +28,5 @@ module.exports = (connection, DataTypes) => {
     },
   };
 
-  return connection.define('Album', schema, scope);
+  return connection.define('Albums', schema, scope);
 };

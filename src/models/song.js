@@ -15,7 +15,7 @@ module.exports = (connection, DataTypes) => {
         },
       },
     },
-    audioRef: {
+    key: {
       type: DataTypes.STRING,
       allowNull: false,
       allowEmpty: false,
@@ -53,5 +53,5 @@ module.exports = (connection, DataTypes) => {
     },
   };
 
-  return connection.define('Song', schema, scope);
+  return connection.define('Songs', schema, scope);
 };

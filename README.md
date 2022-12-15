@@ -35,6 +35,7 @@ Created as part of the Manchester Codes full-stack web development boot-camp.
 - [Supertest](https://www.npmjs.com/package/supertest)
 - [Prettier](https://prettier.io/)
 - [ESlint](https://www.npmjs.com/package/eslint)
+- [sinon](https://www.npmjs.com/package/sinon)
 
 ## Setup
 

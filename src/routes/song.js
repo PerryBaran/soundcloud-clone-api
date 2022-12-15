@@ -4,10 +4,6 @@ const storeInMemory = require('../middleware/multer');
 
 const router = express.Router();
 
-router.post(
-  '/',
-  storeInMemory.single('audio'),
-  songController.create
-);
+router.post('/', storeInMemory.single('audio'), songController.create);
 
 module.exports = router;

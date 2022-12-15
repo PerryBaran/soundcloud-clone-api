@@ -17,11 +17,18 @@ const signup = async (req, res) => {
     const user = await User.create(data);
 
     if (user) {
-      const token = jwt.sign({ id: user.id, name: user.name }, process.env.JWT_SECRETKEY, {
-        expiresIn: EXPIRES_IN,
-      });
+      const token = jwt.sign(
+        { id: user.id, name: user.name },
+        process.env.JWT_SECRETKEY,
+        {
+          expiresIn: EXPIRES_IN,
+        }
+      );
 
-      res.status(201).cookie('userToken', token, { maxAge: EXPIRES_IN }).send(user);
+      res
+        .status(201)
+        .cookie('userToken', token, { maxAge: EXPIRES_IN })
+        .send(user);
     } else {
       res.status(409).send({ error: 'Details are not correct' });
     }
@@ -39,11 +46,18 @@ const login = async (req, res) => {
       const passwordsMatch = await bcrypt.compare(password, user.password);
 
       if (passwordsMatch) {
-        let token = jwt.sign({ id: user.id, name: user.name }, process.env.JWT_SECRETKEY, {
-          expiresIn: EXPIRES_IN,
-        });
+        let token = jwt.sign(
+          { id: user.id, name: user.name },
+          process.env.JWT_SECRETKEY,
+          {
+            expiresIn: EXPIRES_IN,
+          }
+        );
 
-        res.status(201).cookie('userToken', token, { maxAge: EXPIRES_IN }).send(user);
+        res
+          .status(201)
+          .cookie('userToken', token, { maxAge: EXPIRES_IN })
+          .send(user);
       } else {
         res.status(401).send({ error: 'Authentication failed' });
       }

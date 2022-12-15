@@ -25,7 +25,7 @@ const saveUser = async (req, res, next) => {
 
     const username = await User.findOne({
       where: {
-        name
+        name,
       },
     });
 
@@ -35,7 +35,7 @@ const saveUser = async (req, res, next) => {
 
     const emailcheck = await User.findOne({
       where: {
-        email
+        email,
       },
     });
 

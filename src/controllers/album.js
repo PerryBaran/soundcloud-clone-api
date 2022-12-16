@@ -9,24 +9,52 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.readAll = async (req, res) => {
+exports.readAll = async (_, res) => {
   try {
-    await helpers.readAll(req, res, 'album');
+    await helpers.readAll(res, 'album');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.readById = async (req, res) => {
+  const { albumId } = req.params;
+
+  try {
+    await helpers.readById(albumId, res, 'album');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.patch = async (req, res) => {
+  const { body, file, params: { albumId }, user: { id } } = req;
+
+  try {
+    const { UserId } = await Album.findByPk(albumId, {
+      raw: true,
+    });
+
+    if (UserId != id) return res.status(401).send({ message: 'Invalid Credentials' });
+
+    await helpers.patch(body, albumId, res, 'album', file);
   } catch (err) {
     console.error(err);
   }
 };
 
 exports.delete = async (req, res) => {
-  const {  albumId } = req.params;
+  const {
+    params: { albumId },
+    user: { id },
+  } = req;
 
   try {
-    const { key } = await Album.findByPk(albumId, {
+    const { url } = await Album.findByPk(albumId, {
       raw: true,
     });
 
-
-    await helpers.delete(key, albumId, res, 'album');
+    await helpers.delete(url, id, albumId, res, 'album');
   } catch (err) {
     console.error(err);
   }

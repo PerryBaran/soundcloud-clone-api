@@ -5,8 +5,19 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-router.route('/').post(auth.authenticateToken, storeInMemory.single('image'), albumController.create).get(albumController.readAll);
+router
+  .route('/')
+  .post(
+    auth.authenticateToken,
+    storeInMemory.single('image'),
+    albumController.create
+  )
+  .get(albumController.readAll);
 
-router.route('/:alumId').delete(auth.authenticateToken, albumController.delete);
+router
+  .route('/:albumId')
+  .get(albumController.readById)
+  .patch(auth.authenticateToken, storeInMemory.single('image'), albumController.patch)
+  .delete(auth.authenticateToken, albumController.delete);
 
 module.exports = router;

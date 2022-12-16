@@ -8,7 +8,9 @@ AWS.config.update({
 
 const myBucket = new AWS.S3();
 
-const uploadFile = (file, userId) => {
+const Bucket = process.env.AWS_BUCKET_NAME;
+
+exports.uploadFile = (file, userId) => {
   if (!userId) throw new Error('UserId undefined');
 
   return new Promise((resolve, reject) => {
@@ -16,7 +18,7 @@ const uploadFile = (file, userId) => {
 
     const params = {
       Body: file.buffer,
-      Bucket: process.env.AWS_BUCKET_NAME,
+      Bucket,
       Key: key,
     };
 
@@ -30,24 +32,47 @@ const uploadFile = (file, userId) => {
   });
 };
 
-const deleteFile = (filePath) => {
+exports.deleteFile = (filePath) => {
   return new Promise((resolve, reject) => {
     const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: filePath
-    }
+      Bucket,
+      Key: filePath,
+    };
 
     myBucket.deleteObject(params, (err) => {
       if (err) {
-        reject(err)
+        reject(err);
       } else {
-        resolve(`${filePath} deleted`)
+        resolve(`${filePath} deleted`);
       }
     });
   });
-}
+};
 
-module.exports = {
-  uploadFile,
-  deleteFile
+exports.deleteDirectory = async (directory) => {
+  try {
+    const listParams = {
+      Bucket,
+      Prefix: directory,
+    };
+
+    const { Contents } = await myBucket.listObjectsV2(listParams).promise();
+    if (Contents.length === 0) return;
+
+    const Objects = Contents.map(({ Key }) => {
+      return { Key };
+    });
+
+    console.log(Objects);
+
+    const deleteParms = {
+      Bucket,
+      Delete: { Objects },
+    };
+
+    await myBucket.deleteObjects(deleteParms).promise();
+  } catch (err) {
+    console.error(err);
+    throw new Error(err);
+  }
 };

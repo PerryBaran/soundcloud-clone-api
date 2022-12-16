@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt');
 const { User } = require('../models');
 const jwt = require('jsonwebtoken');
 const helpers = require('./helpers');
+const s3 = require('../aws/s3');
 
 const EXPIRES_IN = 1 * 24 * 60 * 60 * 1000;
 
@@ -70,9 +71,64 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.readAll = async (req, res) => {
+exports.readAll = async (_, res) => {
   try {
-    await helpers.readAll(req, res, 'user');
+    await helpers.readAll(res, 'user');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.readById = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    await helpers.readById(userId, res, 'user');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.patch = async (req, res) => {
+  const { body, params: { userId }, user: { id } } = req;
+
+  if (userId != id) return res.status(401).send({ message: 'Invalid Credentials' });
+
+  try {
+    await helpers.patch(body, userId, res, 'user');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.delete = async (req, res) => {
+  const {
+    params: { userId, password },
+    user: { id },
+  } = req;
+
+  try {
+    if (id != userId) {
+      return res.status(401).send({ message: 'Invalid Credentials' });
+    }
+    const user = await User.unscoped().findByPk(id, {
+      raw: true,
+    });
+
+    const passwordsMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordsMatch)
+      return res.status(401).send({ message: 'Invalid Credentials' });
+
+    await s3.deleteDirectory(userId);
+
+    const deletedRows = await User.destroy({ where: { id } });
+
+    if (!deletedRows) {
+      res.status(404).json({ message: `The User could not be found.` });
+    } else {
+      res.status(204).send();
+    }
   } catch (err) {
     console.error(err);
   }

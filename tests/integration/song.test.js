@@ -4,7 +4,7 @@ const { Song, Album, User } = require('../../src/models');
 const s3 = require('../../src/aws/s3');
 const sinon = require('sinon');
 
-describe('/songs', () => {
+xdescribe('/songs', () => {
   const fakeResolve = 'a string';
   let album;
   let validData;

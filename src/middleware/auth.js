@@ -51,7 +51,6 @@ exports.checkCredentials = async (req, res, next) => {
 };
 
 exports.authenticateToken = (req, res, next) => {
-  console.log('stub no work')
   const token = req.headers.usertoken;
 
   if (!token) return res.sendStatus(401)

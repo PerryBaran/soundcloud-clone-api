@@ -5,8 +5,8 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-router.post('/', auth.authenticateToken, storeInMemory.single('image'), albumController.create);
+router.route('/').post(auth.authenticateToken, storeInMemory.single('image'), albumController.create).get(albumController.readAll);
 
-router.delete('/:albumId', auth.authenticateToken, albumController.delete);
+router.route('/:alumId').delete(auth.authenticateToken, albumController.delete);
 
 module.exports = router;

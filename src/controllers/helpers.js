@@ -11,6 +11,49 @@ const getModel = (model) => {
   return models[model];
 };
 
+const getOptions = (model) => {
+  switch (model) {
+    case 'user':
+      return {
+        include: [
+          {
+            model: Album,
+            include: [
+              {
+                model: Song,
+              },
+            ],
+          },
+        ],
+      };
+    case 'album':
+      return {
+        include: [
+          {
+            model: User
+          },
+          {
+            model: Song
+          },
+        ],
+      }
+    case 'song':
+      return {
+        include: [
+          {
+            model: Album,
+            include: [
+              {
+                model: User,
+              },
+            ],
+          },
+        ],
+      }
+    default:
+      return {};
+  }
+};
 
 exports.createFile = async (req, res, model) => {
   const { file, body, user } = req;
@@ -20,9 +63,9 @@ exports.createFile = async (req, res, model) => {
   const Model = getModel(model);
 
   try {
-    const key = await s3.uploadFile(file, user.id);
+    const url = await s3.uploadFile(file, user.id);
     
-    body.key = key;
+    body.url = url;
 
     if (model === 'album') {
       body.UserId = user.id;
@@ -40,8 +83,24 @@ exports.createFile = async (req, res, model) => {
   }
 };
 
+exports.readAll = async (req, res, model) => {
+  const Model = getModel(model);
+  const options = getOptions(model);
+
+  try {
+    const response = await Model.findAll(options);
+
+    res.status(200).send(response);
+  } catch (err) {
+    res.status(500).send({
+      message: err.message ? `Error: ${err.message}` : 'Unexpected error',
+    });
+  }
+};
+
 exports.delete = async (filePath, id, res, model) => {
   const Model = getModel(model);
+
   try {
     await s3.deleteFile(filePath);
     const deletedRows = await Model.destroy({ where: { id } });

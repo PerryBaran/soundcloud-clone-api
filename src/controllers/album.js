@@ -9,17 +9,24 @@ exports.create = async (req, res) => {
   }
 };
 
+exports.readAll = async (req, res) => {
+  try {
+    await helpers.readAll(req, res, 'album');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 exports.delete = async (req, res) => {
   const {  albumId } = req.params;
 
   try {
-    const { key, UserId } = await Album.findByPk(albumId, {
+    const { key } = await Album.findByPk(albumId, {
       raw: true,
     });
 
-    const filePath = `${UserId}/${key}`;
 
-    await helpers.delete(filePath, albumId, res, 'album');
+    await helpers.delete(key, albumId, res, 'album');
   } catch (err) {
     console.error(err);
   }

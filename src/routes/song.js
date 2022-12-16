@@ -17,6 +17,7 @@ router
 router
   .route('/:songId')
   .get(songController.readById)
+  .patch(auth.authenticateToken, songController.patch)
   .delete(auth.authenticateToken, songController.delete);
 
 module.exports = router;

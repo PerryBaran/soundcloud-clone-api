@@ -26,33 +26,29 @@ describe('/users', () => {
 
   describe('POST /users/signup', () => {
     it('creates a new user in the database', async () => {
-      try {
-        const data = {
-          name: 'validName',
-          email: 'valid@email.com',
-          password: 'validPassword',
-        };
-        const { status, body } = await request(app)
-          .post('/users/signup')
-          .send(data);
-        const newUserRecord = await User.unscoped().findByPk(body.id, {
-          raw: true,
-        });
+      const data = {
+        name: 'validName',
+        email: 'valid@email.com',
+        password: 'validPassword',
+      };
+      const { status, body } = await request(app)
+        .post('/users/signup')
+        .send(data);
+      const newUserRecord = await User.unscoped().findByPk(body.id, {
+        raw: true,
+      });
 
-        const passwordsMatch = await bcrypt.compare(
-          data.password,
-          newUserRecord.password
-        );
+      const passwordsMatch = await bcrypt.compare(
+        data.password,
+        newUserRecord.password
+      );
 
-        expect(status).to.equal(201);
-        expect(body.name).to.equal(data.name);
-        expect(body.email).to.equal(data.email);
-        expect(newUserRecord.name).to.equal(data.name);
-        expect(newUserRecord.email).to.equal(data.email);
-        expect(passwordsMatch).to.be.true;
-      } catch (err) {
-        throw new Error(err);
-      }
+      expect(status).to.equal(201);
+      expect(body.name).to.equal(data.name);
+      expect(body.email).to.equal(data.email);
+      expect(newUserRecord.name).to.equal(data.name);
+      expect(newUserRecord.email).to.equal(data.email);
+      expect(passwordsMatch).to.be.true;
     });
 
     it('returns 400 if name is empty', async () => {
@@ -249,17 +245,16 @@ describe('/users', () => {
     describe('/users/:userId', () => {
       describe('GET /users/:userId', () => {
         it('gets the user with the specified id', async () => {
-          const { status, body } = await request(app).get(
-            `/users/${users[0].id}`
-          );
+          const user = users[0];
+          const { status, body } = await request(app).get(`/users/${user.id}`);
 
           expect(status).to.equal(200);
-          expect(body.name).to.equal(users[0].name);
-          expect(body.email).to.equal(users[0].email);
+          expect(body.name).to.equal(user.name);
+          expect(body.email).to.equal(user.email);
           expect(body.password).to.be.undefined;
         });
 
-        it('returns ... if no user exists with the specified id', async () => {
+        it('returns 404 if no user exists with the specified id', async () => {
           const { status, body } = await request(app).get('/users/9999');
 
           expect(status).to.equal(404);

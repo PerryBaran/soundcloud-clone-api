@@ -15,7 +15,6 @@ xdescribe('/albums', () => {
       await User.sequelize.sync();
       await Album.sequelize.sync();
       sinon.stub(s3, 'uploadFile').resolves(fakeResolve);
-
     } catch (err) {
       console.error('that annoying error');
     }
@@ -29,12 +28,12 @@ xdescribe('/albums', () => {
         password: 'validPassword',
       };
       user = await User.create(fakeUserData);
-      
+
       const auth = require('../../src/middleware/auth');
 
       sinon.stub(auth, 'authenticateToken').callsFake((req, _, next) => {
-        req.user = { id: user.id }
-        console.log(req.user)
+        req.user = { id: user.id };
+        console.log(req.user);
         next();
       });
 
@@ -118,7 +117,7 @@ xdescribe('/albums', () => {
       try {
         const { status, body } = await request(app)
           .post('/albums')
-          .field('name', validData.name)
+          .field('name', validData.name);
 
         expect(status).to.equal(400);
         expect(body.message).to.equal('file required');

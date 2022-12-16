@@ -45,8 +45,8 @@ xdescribe('/songs', () => {
       const auth = require('../../src/middleware/auth');
 
       sinon.stub(auth, 'authenticateToken').callsFake((req, _, next) => {
-        req.user = { id: user.id }
-        console.log(req.user)
+        req.user = { id: user.id };
+        console.log(req.user);
         next();
       });
 

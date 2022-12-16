@@ -11,9 +11,11 @@ router
   .get(userController.readById)
   .patch(auth.authenticateToken, userController.patch);
 
-router
-  .route('/:userId/:password')
-  .delete(auth.authenticateToken, userController.delete);
+router.delete(
+  '/:userId/:password',
+  auth.authenticateToken,
+  userController.delete
+);
 
 router.post('/signup', auth.checkCredentials, userController.signup);
 

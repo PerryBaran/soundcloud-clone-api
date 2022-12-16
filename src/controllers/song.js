@@ -28,7 +28,12 @@ exports.readById = async (req, res) => {
 };
 
 exports.patch = async (req, res) => {
-  const { body, file, params: { songId }, user: { id } } = req;
+  const {
+    body,
+    file,
+    params: { songId },
+    user: { id },
+  } = req;
 
   try {
     const { AlbumId } = await Song.findByPk(songId, {
@@ -39,7 +44,8 @@ exports.patch = async (req, res) => {
       raw: true,
     });
 
-    if (UserId != id) return res.status(401).send({ message: 'Invalid Credentials' });
+    if (UserId != id)
+      return res.status(401).send({ message: 'Invalid Credentials' });
 
     await helpers.patch(body, songId, res, 'song', file);
   } catch (err) {

@@ -37,7 +37,7 @@ describe('/songs', () => {
         UserId: user.id,
       };
       album = await Album.create(fakeAlbumData);
-  
+
       validData = {
         name: 'validName',
         position: 0,
@@ -48,7 +48,6 @@ describe('/songs', () => {
         req.user = { id: user.id };
         next();
       });
-
     } catch (err) {
       console.error(err);
     }
@@ -117,7 +116,9 @@ describe('/songs', () => {
           .attach('audio', buffer, 'fake.mp3');
 
         expect(status).to.equal(500);
-        expect(body.message).to.equal('Error: notNull Violation: Song must have an Album');
+        expect(body.message).to.equal(
+          'Error: notNull Violation: Song must have an Album'
+        );
       } catch (err) {
         throw new Error(err);
       }
@@ -134,7 +135,9 @@ describe('/songs', () => {
 
         console.log(body.message);
         expect(status).to.equal(500);
-        expect(body.message).to.equal('Error: insert or update on table "Songs" violates foreign key constraint "Songs_AlbumId_fkey"');
+        expect(body.message).to.equal(
+          'Error: insert or update on table "Songs" violates foreign key constraint "Songs_AlbumId_fkey"'
+        );
       } catch (err) {
         throw new Error(err);
       }

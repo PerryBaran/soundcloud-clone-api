@@ -122,9 +122,9 @@ exports.patch = async (data, id, res, model, file) => {
       const { url } = await Model.findByPk(id, { raw: true });
       const filePath = url.split('.com/')[1];
       await s3.deleteFile(filePath);
-      const userId = filePath.split('/')[0]
+      const userId = filePath.split('/')[0];
       const newUrl = await s3.uploadFile(file, userId);
-      data.url = newUrl
+      data.url = newUrl;
     }
 
     const [updatedRows] = await Model.update(data, { where: { id } });

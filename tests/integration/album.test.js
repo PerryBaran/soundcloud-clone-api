@@ -13,7 +13,6 @@ describe('/albums', () => {
     try {
       await User.sequelize.sync();
       await Album.sequelize.sync();
-      
     } catch (err) {
       console.error('that annoying error');
     }
@@ -34,7 +33,6 @@ describe('/albums', () => {
         req.user = { id: user.id };
         next();
       });
-
     } catch (err) {
       console.error(err);
     }

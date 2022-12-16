@@ -15,7 +15,7 @@ module.exports = (connection, DataTypes) => {
         },
       },
     },
-    key: {
+    url: {
       type: DataTypes.STRING,
       allowNull: false,
       allowEmpty: false,

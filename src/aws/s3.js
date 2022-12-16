@@ -12,19 +12,19 @@ const uploadFile = (file, userId) => {
   if (!userId) throw new Error('UserId undefined');
 
   return new Promise((resolve, reject) => {
-    const key = v4();
+    const key = `${userId}/${v4()}`;
 
     const params = {
       Body: file.buffer,
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `${userId}/${key}`,
+      Key: key,
     };
 
     myBucket.putObject(params, (err) => {
       if (err) {
         reject(err);
       } else {
-        resolve(key);
+        resolve(`${process.env.AWS_BUCKET_URL}/${key}`);
       }
     });
   });

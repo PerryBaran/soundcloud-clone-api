@@ -89,6 +89,18 @@ exports.readById = async (req, res) => {
   }
 };
 
+exports.patch = async (req, res) => {
+  const { body, params: { userId }, user: { id } } = req;
+
+  if (userId != id) return res.status(401).send({ message: 'Invalid Credentials' });
+
+  try {
+    await helpers.patch(body, userId, res, 'user');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 exports.delete = async (req, res) => {
   const {
     params: { userId, password },

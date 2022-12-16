@@ -27,6 +27,22 @@ exports.readById = async (req, res) => {
   }
 };
 
+exports.patch = async (req, res) => {
+  const { body, file, params: { albumId }, user: { id } } = req;
+
+  try {
+    const { UserId } = await Album.findByPk(albumId, {
+      raw: true,
+    });
+
+    if (UserId != id) return res.status(401).send({ message: 'Invalid Credentials' });
+
+    await helpers.patch(body, albumId, res, 'album', file);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 exports.delete = async (req, res) => {
   const {
     params: { albumId },

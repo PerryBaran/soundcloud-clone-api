@@ -117,6 +117,33 @@ exports.readById = async (id, res, model) => {
   }
 };
 
+exports.patch = async (data, id, res, model, file) => {
+  const Model = getModel(model);
+
+  try {
+    if (file) {
+      const { url } = await Model.findByPk(id, { raw: true });
+      const filePath = url.split('.com/')[1];
+      await s3.deleteFile(filePath);
+      const userId = filePath.split('/')[0]
+      const newUrl = await s3.uploadFile(file, userId);
+      data.url = newUrl
+    }
+
+    const [updatedRows] = await Model.update(data, { where: { id } });
+
+    if (updatedRows) {
+      res.status(200).send();
+    } else {
+      res.status(404).send({ message: `The ${model} could not be found.` });
+    }
+  } catch (err) {
+    res.status(500).send({
+      message: err.message ? `Error: ${err.message}` : 'Unexpected error',
+    });
+  }
+};
+
 exports.delete = async (url, userId, id, res, model) => {
   const Model = getModel(model);
   const filePath = url.split('.com/')[1];

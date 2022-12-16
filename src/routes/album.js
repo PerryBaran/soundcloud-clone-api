@@ -17,7 +17,7 @@ router
 router
   .route('/:albumId')
   .get(albumController.readById)
-  .patch(auth.authenticateToken, albumController.patch)
+  .patch(auth.authenticateToken, storeInMemory.single('image'), albumController.patch)
   .delete(auth.authenticateToken, albumController.delete);
 
 module.exports = router;

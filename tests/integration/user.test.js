@@ -32,7 +32,7 @@ describe('/users', () => {
         const { status, body } = await request(app)
           .post('/users/signup')
           .send(data);
-        const newUserRecord = await User.findByPk(body.id, {
+        const newUserRecord = await User.unscoped().findByPk(body.id, {
           raw: true,
         });
 

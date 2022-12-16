@@ -42,6 +42,9 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(401).send({ message: 'Authentication failed' });
+
     const user = await User.unscoped().findOne({ where: { email } });
 
     if (user) {
@@ -90,9 +93,14 @@ exports.readById = async (req, res) => {
 };
 
 exports.patch = async (req, res) => {
-  const { body, params: { userId }, user: { id } } = req;
+  const {
+    body,
+    params: { userId },
+    user: { id },
+  } = req;
 
-  if (userId != id) return res.status(401).send({ message: 'Invalid Credentials' });
+  if (userId != id)
+    return res.status(401).send({ message: 'Invalid Credentials' });
 
   try {
     await helpers.patch(body, userId, res, 'user');
@@ -115,6 +123,9 @@ exports.delete = async (req, res) => {
       raw: true,
     });
 
+    if (!user)
+      return res.status(404).json({ message: 'The User could not be found.' });
+
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordsMatch)
@@ -125,11 +136,13 @@ exports.delete = async (req, res) => {
     const deletedRows = await User.destroy({ where: { id } });
 
     if (!deletedRows) {
-      res.status(404).json({ message: `The User could not be found.` });
+      res.status(404).json({ message: 'The User could not be found.' });
     } else {
       res.status(204).send();
     }
   } catch (err) {
-    console.error(err);
+    res.status(500).send({
+      message: err.message ? `Error: ${err.message}` : 'Unexpected error',
+    });
   }
 };

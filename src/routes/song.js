@@ -5,8 +5,18 @@ const auth = require('../middleware/auth');
 
 const router = express.Router();
 
-router.route('/').post(auth.authenticateToken, storeInMemory.single('audio'), songController.create).get(songController.readAll);
+router
+  .route('/')
+  .post(
+    auth.authenticateToken,
+    storeInMemory.single('audio'),
+    songController.create
+  )
+  .get(songController.readAll);
 
-router.route('/:songId').delete( auth.authenticateToken, songController.delete);
+router
+  .route('/:songId')
+  .get(songController.readById)
+  .delete(auth.authenticateToken, songController.delete);
 
 module.exports = router;

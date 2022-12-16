@@ -74,9 +74,6 @@ exports.createFile = async (req, res, model) => {
     const response = await Model.create(body);
     res.status(200).send(response);
   } catch (err) {
-    if (err.message === 'Cannot find User') {
-      return res.status(404).send({ message: err.message });
-    }
     res.status(500).send({
       message: err.message ? `Error: ${err.message}` : 'Unexpected error',
     });

@@ -30,13 +30,13 @@ const getOptions = (model) => {
       return {
         include: [
           {
-            model: User
+            model: User,
           },
           {
-            model: Song
+            model: Song,
           },
         ],
-      }
+      };
     case 'song':
       return {
         include: [
@@ -49,7 +49,7 @@ const getOptions = (model) => {
             ],
           },
         ],
-      }
+      };
     default:
       return {};
   }
@@ -64,13 +64,13 @@ exports.createFile = async (req, res, model) => {
 
   try {
     const url = await s3.uploadFile(file, user.id);
-    
+
     body.url = url;
 
     if (model === 'album') {
       body.UserId = user.id;
     }
-    
+
     const response = await Model.create(body);
     res.status(200).send(response);
   } catch (err) {
@@ -83,7 +83,7 @@ exports.createFile = async (req, res, model) => {
   }
 };
 
-exports.readAll = async (req, res, model) => {
+exports.readAll = async (res, model) => {
   const Model = getModel(model);
   const options = getOptions(model);
 
@@ -98,8 +98,29 @@ exports.readAll = async (req, res, model) => {
   }
 };
 
-exports.delete = async (filePath, id, res, model) => {
+exports.readById = async (id, res, model) => {
   const Model = getModel(model);
+  const options = getOptions(model);
+
+  try {
+    const response = await Model.findByPk(id, options);
+
+    if (!response) {
+      res.status(404).send({ message: `The ${model} could not be found.` });
+    } else {
+      res.status(200).json(response);
+    }
+  } catch (err) {
+    res.status(500).send({
+      message: err.message ? `Error: ${err.message}` : 'Unexpected error',
+    });
+  }
+};
+
+exports.delete = async (url, userId, id, res, model) => {
+  const Model = getModel(model);
+  const filePath = url.split('.com/')[1];
+  if (userId != filePath.split('/')[0]) return res.status(401).send({ message: 'Invalid Credentials'});
 
   try {
     await s3.deleteFile(filePath);
@@ -116,3 +137,4 @@ exports.delete = async (filePath, id, res, model) => {
     });
   }
 };
+

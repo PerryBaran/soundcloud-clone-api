@@ -9,23 +9,33 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.readAll = async (req, res) => {
+exports.readAll = async (_, res) => {
   try {
-    await helpers.readAll(req, res, 'song');
+    await helpers.readAll(res, 'song');
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+exports.readById = async (req, res) => {
+  const { songId } = req.params;
+
+  try {
+    await helpers.readById(songId, res, 'song');
   } catch (err) {
     console.error(err);
   }
 };
 
 exports.delete = async (req, res) => {
-  const { songId } = req.params;
+  const { params: { songId }, user: { id } } = req;
 
   try {
-    const { key, } = await Song.findByPk(songId, {
+    const { url } = await Song.findByPk(songId, {
       raw: true,
     });
 
-    await helpers.delete(key, songId, res, 'song');
+    await helpers.delete(url, id, songId, res, 'song');
   } catch (err) {
     console.error(err);
   }

@@ -71,9 +71,9 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.readAll = async (req, res) => {
+exports.readAll = async (_, res) => {
   try {
-    await helpers.readAll(req, res, 'user');
+    await helpers.readAll(res, 'user');
   } catch (err) {
     console.error(err);
   }

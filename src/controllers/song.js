@@ -28,7 +28,10 @@ exports.readById = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  const { params: { songId }, user: { id } } = req;
+  const {
+    params: { songId },
+    user: { id },
+  } = req;
 
   try {
     const { url } = await Song.findByPk(songId, {

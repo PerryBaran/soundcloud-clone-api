@@ -120,7 +120,8 @@ exports.readById = async (id, res, model) => {
 exports.delete = async (url, userId, id, res, model) => {
   const Model = getModel(model);
   const filePath = url.split('.com/')[1];
-  if (userId != filePath.split('/')[0]) return res.status(401).send({ message: 'Invalid Credentials'});
+  if (userId != filePath.split('/')[0])
+    return res.status(401).send({ message: 'Invalid Credentials' });
 
   try {
     await s3.deleteFile(filePath);
@@ -137,4 +138,3 @@ exports.delete = async (url, userId, id, res, model) => {
     });
   }
 };
-

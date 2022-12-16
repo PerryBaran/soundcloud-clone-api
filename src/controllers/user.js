@@ -90,7 +90,10 @@ exports.readById = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  const { params: { userId, password }, user: { id } } = req;
+  const {
+    params: { userId, password },
+    user: { id },
+  } = req;
 
   try {
     if (id != userId) {
@@ -102,10 +105,11 @@ exports.delete = async (req, res) => {
 
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
-    if (!passwordsMatch) return res.status(401).send({ message: 'Invalid Credentials'});
+    if (!passwordsMatch)
+      return res.status(401).send({ message: 'Invalid Credentials' });
 
     await s3.deleteDirectory(userId);
-    
+
     const deletedRows = await User.destroy({ where: { id } });
 
     if (!deletedRows) {
@@ -113,7 +117,6 @@ exports.delete = async (req, res) => {
     } else {
       res.status(204).send();
     }
-    
   } catch (err) {
     console.error(err);
   }

@@ -28,7 +28,10 @@ exports.readById = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  const { params: { albumId }, user: { id } } = req;
+  const {
+    params: { albumId },
+    user: { id },
+  } = req;
 
   try {
     const { url } = await Album.findByPk(albumId, {

@@ -68,110 +68,141 @@ describe('/songs', () => {
     const buffer = Buffer.from('fake data');
 
     it('creates a new song in the database', async () => {
-      try {
-        const { status, body } = await request(app)
-          .post('/songs')
-          .field('name', validData.name)
-          .field('AlbumId', validData.AlbumId)
-          .field('position', validData.position)
-          .attach('audio', buffer, 'fake.mp3');
-        const newSongRecord = await Song.findByPk(body.id, {
-          raw: true,
-        });
+      const { status, body } = await request(app)
+        .post('/songs')
+        .field('name', validData.name)
+        .field('AlbumId', validData.AlbumId)
+        .field('position', validData.position)
+        .attach('audio', buffer, 'fake.mp3');
+      const newSongRecord = await Song.findByPk(body.id, {
+        raw: true,
+      });
 
-        expect(status).to.equal(200);
-        expect(body.name).to.equal(validData.name);
-        expect(body.AlbumId).to.equal(validData.AlbumId);
-        expect(body.position).to.equal(validData.position.toString());
-        expect(body.url).to.equal(fakeResolve);
-        expect(newSongRecord.name).to.equal(body.name);
-      } catch (err) {
-        throw new Error(err);
-      }
+      expect(status).to.equal(200);
+      expect(body.name).to.equal(validData.name);
+      expect(body.AlbumId).to.equal(validData.AlbumId);
+      expect(body.position).to.equal(validData.position.toString());
+      expect(body.url).to.equal(fakeResolve);
+      expect(newSongRecord.name).to.equal(body.name);
     });
 
     it("returns 500 if name field doesn't exist", async () => {
-      try {
-        const { status, body } = await request(app)
-          .post('/songs')
-          .field('AlbumId', validData.AlbumId)
-          .field('position', validData.position)
-          .attach('audio', buffer, 'fake.mp3');
+      const { status, body } = await request(app)
+        .post('/songs')
+        .field('AlbumId', validData.AlbumId)
+        .field('position', validData.position)
+        .attach('audio', buffer, 'fake.mp3');
 
-        expect(status).to.equal(500);
-        expect(body.message).to.equal(
-          'Error: notNull Violation: Must provide a song name'
-        );
-      } catch (err) {
-        throw new Error(err);
-      }
+      expect(status).to.equal(500);
+      expect(body.message).to.equal(
+        'Error: notNull Violation: Must provide a song name'
+      );
     });
 
     it("returns 404 if AlbumId field doesn't exist", async () => {
-      try {
-        const { status, body } = await request(app)
-          .post('/songs')
-          .field('name', validData.name)
-          .field('position', validData.position)
-          .attach('audio', buffer, 'fake.mp3');
+      const { status, body } = await request(app)
+        .post('/songs')
+        .field('name', validData.name)
+        .field('position', validData.position)
+        .attach('audio', buffer, 'fake.mp3');
 
-        expect(status).to.equal(500);
-        expect(body.message).to.equal(
-          'Error: notNull Violation: Song must have an Album'
-        );
-      } catch (err) {
-        throw new Error(err);
-      }
+      expect(status).to.equal(500);
+      expect(body.message).to.equal(
+        'Error: notNull Violation: Song must have an Album'
+      );
     });
 
     it("returns 404 if AlbumId doesn't match an album of a valid User", async () => {
-      try {
-        const { status, body } = await request(app)
-          .post('/songs')
-          .field('name', validData.name)
-          .field('AlbumId', 999)
-          .field('position', validData.position)
-          .attach('audio', buffer, 'fake.mp3');
+      const { status, body } = await request(app)
+        .post('/songs')
+        .field('name', validData.name)
+        .field('AlbumId', 999)
+        .field('position', validData.position)
+        .attach('audio', buffer, 'fake.mp3');
 
-        console.log(body.message);
-        expect(status).to.equal(500);
-        expect(body.message).to.equal(
-          'Error: insert or update on table "Songs" violates foreign key constraint "Songs_AlbumId_fkey"'
-        );
-      } catch (err) {
-        throw new Error(err);
-      }
+      console.log(body.message);
+      expect(status).to.equal(500);
+      expect(body.message).to.equal(
+        'Error: insert or update on table "Songs" violates foreign key constraint "Songs_AlbumId_fkey"'
+      );
     });
 
     it('returns 400 if the audio file has the wrong key', async () => {
-      try {
-        const { status, body } = await request(app)
-          .post('/songs')
-          .field('name', validData.name)
-          .field('AlbumId', validData.AlbumId)
-          .field('position', validData.position)
-          .attach('file', buffer, 'fake.mp3');
+      const { status, body } = await request(app)
+        .post('/songs')
+        .field('name', validData.name)
+        .field('AlbumId', validData.AlbumId)
+        .field('position', validData.position)
+        .attach('file', buffer, 'fake.mp3');
 
-        expect(status).to.equal(400);
-        expect(body.message).to.equal('File is wrong type');
-      } catch (err) {
-        throw new Error(err);
-      }
+      expect(status).to.equal(400);
+      expect(body.message).to.equal('File is wrong type');
     });
 
     it("returns 400 if the file doesn't exist", async () => {
-      try {
-        const { status, body } = await request(app)
-          .post('/songs')
-          .field('name', validData.name)
-          .field('AlbumId', validData.AlbumId)
-          .field('position', validData.position);
+      const { status, body } = await request(app)
+        .post('/songs')
+        .field('name', validData.name)
+        .field('AlbumId', validData.AlbumId)
+        .field('position', validData.position);
 
-        expect(status).to.equal(400);
-        expect(body.message).to.equal('file required');
-      } catch (err) {
-        throw new Error(err);
-      }
+      expect(status).to.equal(400);
+      expect(body.message).to.equal('file required');
+    });
+  });
+
+  describe('with records in the database', () => {
+    let songs;
+
+    beforeEach(async () => {
+      songs = await Promise.all([
+        Song.create({
+          name: 'fakeName1',
+          AlbumId: album.id,
+          url: 'fakeUrl1',
+          position: 0,
+        }),
+        Song.create({
+          name: 'fakeName2',
+          AlbumId: album.id,
+          url: 'fakeUrl2',
+          position: 1,
+        }),
+      ]);
+    });
+
+    describe('GET /songs', () => {
+      it('returns all songs in the database', async () => {
+        const { status, body } = await request(app).get('/songs');
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(songs.length);
+        body.forEach((song) => {
+          const expected = songs.find((item) => item.name === song.name);
+
+          expect(song.id).to.equal(expected.id);
+        });
+      });
+    });
+
+    describe('/songs/:songId', () => {
+      describe('GET /songs/:songId', () => {
+        it('gets the song with the specified id', async () => {
+          const song = songs[0];
+          const { status, body } = await request(app).get(`/songs/${song.id}`);
+
+          expect(status).to.equal(200);
+          expect(body.name).to.equal(song.name);
+          expect(body.url).to.equal(song.url);
+        });
+
+        it('returns 404 if no song exists with the specified id', async () => {
+          const { status, body } = await request(app).get('/songs/9999');
+
+          expect(status).to.equal(404);
+          expect(body.message).to.equal('The song could not be found.');
+        });
+      });
     });
   });
 });

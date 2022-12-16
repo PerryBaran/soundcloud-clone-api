@@ -4,47 +4,44 @@ module.exports = (connection, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       allowEmpty: false,
-      unique: {
-        args: true,
-        msg: 'This username is already in use',
-      },
       validate: {
         notNull: {
           args: true,
-          msg: 'Must provide a username',
+          msg: 'Must provide a song name',
         },
         notEmpty: {
           args: true,
-          msg: 'The username cannot be empty',
+          msg: 'The song name cannot be empty',
         },
       },
     },
-    email: {
+    url: {
       type: DataTypes.STRING,
       allowNull: false,
       allowEmpty: false,
-      unique: {
-        args: true,
-        msg: 'This email is already in use',
-      },
       validate: {
         notNull: {
           args: true,
-          msg: 'Must provide an email',
+          msg: 'Must provide an audio file',
         },
-        isEmail: {
+        notEmpty: {
           args: true,
-          msg: 'Email must be valid',
+          msg: 'The audio file cannot be empty',
         },
       },
     },
-    password: {
+    position: {
       type: DataTypes.STRING,
       allowNull: false,
+      allowEmpty: false,
       validate: {
         notNull: {
           args: true,
-          msg: 'Must provide a password',
+          msg: 'Must provide a song position',
+        },
+        notEmpty: {
+          args: true,
+          msg: 'The provide a song position',
         },
       },
     },
@@ -52,9 +49,9 @@ module.exports = (connection, DataTypes) => {
 
   const scope = {
     defaultScope: {
-      attributes: { exclude: ['password', 'createdAt', 'updatedAt'] },
+      attributes: { exclude: ['createdAt', 'updatedAt'] },
     },
   };
 
-  return connection.define('Users', schema, scope);
+  return connection.define('Songs', schema, scope);
 };

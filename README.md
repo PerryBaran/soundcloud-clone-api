@@ -22,6 +22,9 @@ Created as part of the Manchester Codes full-stack web development boot-camp.
 - [Bycrypt](https://www.npmjs.com/package/bcrypt)
 - [JSONwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 - [Cookie-Parser](https://www.npmjs.com/package/cookie-parser)
+- [AWS-SDK](https://www.npmjs.com/package/aws-sdk)
+- [Multer](https://www.npmjs.com/package/multer)
+- [uuid](https://www.npmjs.com/package/uuid)
 
 ### Dev Dependencies
 
@@ -32,6 +35,7 @@ Created as part of the Manchester Codes full-stack web development boot-camp.
 - [Supertest](https://www.npmjs.com/package/supertest)
 - [Prettier](https://prettier.io/)
 - [ESlint](https://www.npmjs.com/package/eslint)
+- [sinon](https://www.npmjs.com/package/sinon)
 
 ## Setup
 

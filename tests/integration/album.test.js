@@ -1,26 +1,27 @@
 const { expect } = require('chai');
 const request = require('supertest');
-
 const { Album, User } = require('../../src/models');
 const s3 = require('../../src/aws/s3');
 const sinon = require('sinon');
+const { authStub, app } = require('../test-config');
 
-xdescribe('/albums', () => {
+describe('/albums', () => {
   const fakeResolve = 'a string';
   let user;
-  let app;
 
   before(async () => {
     try {
       await User.sequelize.sync();
       await Album.sequelize.sync();
-      sinon.stub(s3, 'uploadFile').resolves(fakeResolve);
+      
     } catch (err) {
       console.error('that annoying error');
     }
   });
 
   beforeEach(async () => {
+    sinon.stub(s3, 'uploadFile').resolves(fakeResolve);
+
     try {
       const fakeUserData = {
         name: 'validName',
@@ -29,15 +30,11 @@ xdescribe('/albums', () => {
       };
       user = await User.create(fakeUserData);
 
-      const auth = require('../../src/middleware/auth');
-
-      sinon.stub(auth, 'authenticateToken').callsFake((req, _, next) => {
+      authStub.callsFake((req, _, next) => {
         req.user = { id: user.id };
-        console.log(req.user);
         next();
       });
 
-      app = require('../../src/app');
     } catch (err) {
       console.error(err);
     }
@@ -77,14 +74,14 @@ xdescribe('/albums', () => {
         expect(status).to.equal(200);
         expect(body.name).to.equal(validData.name);
         expect(body.UserId).to.equal(validData.UserId);
-        expect(body.key).to.equal(fakeResolve);
+        expect(body.url).to.equal(fakeResolve);
         expect(newAlbumRecord.name).to.equal(body.name);
       } catch (err) {
         throw new Error(err);
       }
     });
 
-    xit("returns 500 if name field doesn't exist", async () => {
+    it("returns 500 if name field doesn't exist", async () => {
       try {
         const { status, body } = await request(app)
           .post('/albums')
@@ -99,7 +96,7 @@ xdescribe('/albums', () => {
       }
     });
 
-    xit('returns 400 if the image file has the wrong key', async () => {
+    it('returns 400 if the image file has the wrong key', async () => {
       try {
         const { status, body } = await request(app)
           .post('/albums')
@@ -113,7 +110,7 @@ xdescribe('/albums', () => {
       }
     });
 
-    xit("returns 400 if the file doesn't exist", async () => {
+    it("returns 400 if the file doesn't exist", async () => {
       try {
         const { status, body } = await request(app)
           .post('/albums')

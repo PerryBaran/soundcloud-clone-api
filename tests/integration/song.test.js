@@ -3,12 +3,12 @@ const request = require('supertest');
 const { Song, Album, User } = require('../../src/models');
 const s3 = require('../../src/aws/s3');
 const sinon = require('sinon');
+const { authStub, app } = require('../test-config');
 
-xdescribe('/songs', () => {
-  const fakeResolve = 'a string';
+describe('/songs', () => {
+  const fakeResolve = 'fake url';
   let album;
   let validData;
-  let app;
 
   before(async () => {
     try {
@@ -30,27 +30,25 @@ xdescribe('/songs', () => {
         password: 'validPassword',
       };
       const user = await User.create(fakeUserData);
+
       const fakeAlbumData = {
         name: 'validName',
-        key: 'validKey',
+        url: 'validKey',
         UserId: user.id,
       };
       album = await Album.create(fakeAlbumData);
+  
       validData = {
         name: 'validName',
         position: 0,
         AlbumId: album.id,
       };
 
-      const auth = require('../../src/middleware/auth');
-
-      sinon.stub(auth, 'authenticateToken').callsFake((req, _, next) => {
+      authStub.callsFake((req, _, next) => {
         req.user = { id: user.id };
-        console.log(req.user);
         next();
       });
 
-      app = require('../../src/app');
     } catch (err) {
       console.error(err);
     }
@@ -86,7 +84,7 @@ xdescribe('/songs', () => {
         expect(body.name).to.equal(validData.name);
         expect(body.AlbumId).to.equal(validData.AlbumId);
         expect(body.position).to.equal(validData.position.toString());
-        expect(body.key).to.equal(fakeResolve);
+        expect(body.url).to.equal(fakeResolve);
         expect(newSongRecord.name).to.equal(body.name);
       } catch (err) {
         throw new Error(err);
@@ -118,8 +116,8 @@ xdescribe('/songs', () => {
           .field('position', validData.position)
           .attach('audio', buffer, 'fake.mp3');
 
-        expect(status).to.equal(404);
-        expect(body.message).to.equal('Cannot find User');
+        expect(status).to.equal(500);
+        expect(body.message).to.equal('Error: notNull Violation: Song must have an Album');
       } catch (err) {
         throw new Error(err);
       }
@@ -130,12 +128,13 @@ xdescribe('/songs', () => {
         const { status, body } = await request(app)
           .post('/songs')
           .field('name', validData.name)
-          .field('AlbumId', 9999999999)
+          .field('AlbumId', 999)
           .field('position', validData.position)
           .attach('audio', buffer, 'fake.mp3');
 
-        expect(status).to.equal(404);
-        expect(body.message).to.equal('Cannot find User');
+        console.log(body.message);
+        expect(status).to.equal(500);
+        expect(body.message).to.equal('Error: insert or update on table "Songs" violates foreign key constraint "Songs_AlbumId_fkey"');
       } catch (err) {
         throw new Error(err);
       }

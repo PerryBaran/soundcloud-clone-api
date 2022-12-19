@@ -1,5 +1,6 @@
 const { User, Album, Song } = require('../models');
 const s3 = require('../aws/s3');
+const { Op } = require('sequelize');
 
 const getModel = (model) => {
   const models = {
@@ -86,10 +87,14 @@ exports.readAll = async (query, res, model) => {
   const Model = getModel(model);
   const options = getOptions(model);
   if (query.name) {
-    options.where = { name: query.name }
+    options.where = {
+      name: {
+        [Op.iLike]: `%${query.name}%`,
+      },
+    };
   }
   if (query.limit) {
-    options.limit = query.limit
+    options.limit = query.limit;
   }
 
   try {

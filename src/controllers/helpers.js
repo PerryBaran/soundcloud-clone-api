@@ -87,11 +87,15 @@ exports.readAll = async (query, res, model) => {
   const Model = getModel(model);
   const options = getOptions(model);
   if (query.name) {
-    options.where = {
-      name: {
-        [Op.iLike]: `%${query.name}%`,
-      },
-    };
+    if (query.exact && query.exact === 'true') {
+      options.where = { name: query.name };
+    } else {
+      options.where = {
+        name: {
+          [Op.iLike]: `%${query.name}%`,
+        },
+      };
+    }
   }
   if (query.limit) {
     options.limit = query.limit;

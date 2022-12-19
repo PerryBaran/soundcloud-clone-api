@@ -15,7 +15,7 @@ describe('associations', () => {
       await Album.sequelize.sync();
       await Song.sequelize.syng();
     } catch (err) {
-      console.error('that annoying error');
+      console.error(err);
     }
   });
 

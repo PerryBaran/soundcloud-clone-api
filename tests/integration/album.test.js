@@ -14,7 +14,7 @@ describe('/albums', () => {
       await User.sequelize.sync();
       await Album.sequelize.sync();
     } catch (err) {
-      console.error('that annoying error');
+      console.error(err);
     }
   });
 

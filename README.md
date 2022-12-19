@@ -80,6 +80,37 @@ AWS_BUCKET_REGION=[AWS S3 Bucket region]
 AWS_BUCKET_URL=[AWS S3 Bucket url]
 ```
 
+## Deployment
+
+App hosted on [Render](https://render.com/) at https://soundcloud-clone-api.onrender.com.
+
+### How to Deploy on Render
+
+### Create the Web Service
+
+1. Create Render Account if not already done so.
+2. Click **New** in the top right and then select **Web Service**.
+3. Connect Render to your github account and then search for your repository and click **Connect**.
+4. Give your service a unique **Name**, select a **Region**, select the correct **Branch** (usually main), select the **Environment**, add the **Build Command** (e.g. npm ci) and add a **Start Command** (e.g. node index.js).
+5. Chose a **Plan** and then click **Create Web service**.
+
+### Create the Database
+
+1. Click **New** in the top right and then select **PostgreSQL** (if database is running on PostgreSQL.
+2. Give your Database a **Name**.
+3. Chose a **Region** and a **Plan**.
+4. click **Create Database** and wait.
+
+### Connect your Database and Web Service
+
+1. On **Dashboard** open up your **Database**.
+2. Scroll down to **Connections**.
+3. Make note of the **Hostname**, **Port**, **Database**, **Username** and **Password**,
+4. Return to the **Dashboard** and open up your **Web Service**.
+5. Select **Enviroment** on the right hand side.
+6. Click **Add Enviroment Variable**.
+7. The **Key** should be the environment variable key as defined in your local **.env**. The value is the the corresponding information from the **Database** e.g. `KEY: DBHOST, value: [Hostname value] `. Add all fields mentioned above to the **Environment Variables** including any required for other service e.g. AWS information.
+
 ## Commands
 
 To run the server use:

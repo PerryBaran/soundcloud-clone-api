@@ -24,7 +24,12 @@ app.use((err, _req, res, _next) => {
         return res.status(400).send({ message: 'File is wrong type' });
       }
       case 'LIMIT_FILE_SIZE': {
-        return res.status(400).send({ message: 'File size is too large, images must be smaller then 5MB and songs smaller than 100MB' });
+        return res
+          .status(400)
+          .send({
+            message:
+              'File size is too large, images must be smaller then 5MB and songs smaller than 100MB',
+          });
       }
       case 'LIMIT_FILE_COUNT': {
         return res.status(400).send({ message: 'File limit reached' });

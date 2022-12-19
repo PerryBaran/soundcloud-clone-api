@@ -8,7 +8,7 @@ const { authStub, app } = require('../test-config');
 describe('/songs', () => {
   let fakeResolve;
   let user;
-  let song;
+  let album;
   let validData;
 
   before(async () => {
@@ -22,8 +22,6 @@ describe('/songs', () => {
   });
 
   beforeEach(async () => {
-    
-
     try {
       const fakeUserData = {
         name: 'validName',
@@ -37,12 +35,12 @@ describe('/songs', () => {
         url: 'validKey',
         UserId: user.id,
       };
-      song = await Album.create(fakeAlbumData);
+      album = await Album.create(fakeAlbumData);
 
       validData = {
         name: 'validName',
         position: 0,
-        AlbumId: song.id,
+        AlbumId: album.id,
       };
 
       fakeResolve = `url.com/${user.id}/fakeResolve`;
@@ -161,13 +159,13 @@ describe('/songs', () => {
       songs = await Promise.all([
         Song.create({
           name: 'fakeName1',
-          AlbumId: song.id,
+          AlbumId: album.id,
           url: `url.com/${user.id}/fakeUrl1`,
           position: 0,
         }),
         Song.create({
           name: 'fakeName2',
-          AlbumId: song.id,
+          AlbumId: album.id,
           url: `url.com/${user.id}/fakeUrl2`,
           position: 1,
         }),
@@ -185,6 +183,24 @@ describe('/songs', () => {
 
           expect(song.id).to.equal(expected.id);
         });
+      });
+
+      it('returns queried song by name', async () => {
+        const song = songs[0];
+        const { status, body } = await request(app).get(
+          `/songs?name=${song.name}`
+        );
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(1);
+        expect(body[0].id).to.equal(song.id);
+      });
+
+      it('returns limited results by query', async () => {
+        const { status, body } = await request(app).get('/songs?limit=1');
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(1);
       });
     });
 
@@ -210,8 +226,10 @@ describe('/songs', () => {
       describe('PATCH /songs/:songId', () => {
         it('edits song with specified id', async () => {
           const newName = 'newName';
-          const song = songs[0]
-          const { status } = await request(app).patch(`/songs/${song.id}`).field('name', newName);
+          const song = songs[0];
+          const { status } = await request(app)
+            .patch(`/songs/${song.id}`)
+            .field('name', newName);
           const updatedSongRecord = await Song.findByPk(song.id, {
             raw: true,
           });
@@ -222,7 +240,9 @@ describe('/songs', () => {
 
         it('returns 404 if no song exists with the specified id', async () => {
           const newName = 'newName';
-          const { status, body } = await request(app).patch('/songs/9999').field('name', newName);
+          const { status, body } = await request(app)
+            .patch('/songs/9999')
+            .field('name', newName);
 
           expect(status).to.equal(404);
           expect(body.message).to.equal('The song could not be found');

@@ -240,6 +240,24 @@ describe('/users', () => {
           expect(user.email).to.equal(expected.email);
         });
       });
+
+      it('returns queried user by name', async () => {
+        const user = users[0];
+        const { status, body } = await request(app).get(
+          `/users?name=${user.name}`
+        );
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(1);
+        expect(body[0].id).to.equal(user.id);
+      });
+
+      it('returns limited results by query', async () => {
+        const { status, body } = await request(app).get('/users?limit=1');
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(1);
+      });
     });
 
     describe('/users/:userId', () => {

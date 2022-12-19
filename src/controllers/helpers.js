@@ -1,5 +1,6 @@
 const { User, Album, Song } = require('../models');
 const s3 = require('../aws/s3');
+const { Op } = require('sequelize');
 
 const getModel = (model) => {
   const models = {
@@ -21,6 +22,7 @@ const getOptions = (model) => {
             include: [
               {
                 model: Song,
+                order: ['position', 'ASC'],
               },
             ],
           },
@@ -34,6 +36,7 @@ const getOptions = (model) => {
           },
           {
             model: Song,
+            order: ['position', 'ASC'],
           },
         ],
       };
@@ -80,9 +83,19 @@ exports.createFile = async (req, res, model) => {
   }
 };
 
-exports.readAll = async (res, model) => {
+exports.readAll = async (query, res, model) => {
   const Model = getModel(model);
   const options = getOptions(model);
+  if (query.name) {
+    options.where = {
+      name: {
+        [Op.iLike]: `%${query.name}%`,
+      },
+    };
+  }
+  if (query.limit) {
+    options.limit = query.limit;
+  }
 
   try {
     const response = await Model.findAll(options);

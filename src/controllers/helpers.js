@@ -21,6 +21,7 @@ const getOptions = (model) => {
             include: [
               {
                 model: Song,
+                order: ['position', 'ASC'],
               },
             ],
           },
@@ -34,6 +35,7 @@ const getOptions = (model) => {
           },
           {
             model: Song,
+            order: ['position', 'ASC'],
           },
         ],
       };

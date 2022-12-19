@@ -8,6 +8,7 @@ const { authStub, app } = require('../test-config');
 describe('/songs', () => {
   let fakeResolve;
   let user;
+  let album;
   let song;
   let validData;
 
@@ -22,8 +23,6 @@ describe('/songs', () => {
   });
 
   beforeEach(async () => {
-    
-
     try {
       const fakeUserData = {
         name: 'validName',
@@ -37,12 +36,12 @@ describe('/songs', () => {
         url: 'validKey',
         UserId: user.id,
       };
-      song = await Album.create(fakeAlbumData);
+      album = await Album.create(fakeAlbumData);
 
       validData = {
         name: 'validName',
         position: 0,
-        AlbumId: song.id,
+        AlbumId: album.id,
       };
 
       fakeResolve = `url.com/${user.id}/fakeResolve`;
@@ -161,13 +160,13 @@ describe('/songs', () => {
       songs = await Promise.all([
         Song.create({
           name: 'fakeName1',
-          AlbumId: song.id,
+          AlbumId: album.id,
           url: `url.com/${user.id}/fakeUrl1`,
           position: 0,
         }),
         Song.create({
           name: 'fakeName2',
-          AlbumId: song.id,
+          AlbumId: album.id,
           url: `url.com/${user.id}/fakeUrl2`,
           position: 1,
         }),

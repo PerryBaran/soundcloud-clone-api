@@ -19,8 +19,6 @@ describe('/albums', () => {
   });
 
   beforeEach(async () => {
-    
-
     try {
       const fakeUserData = {
         name: 'validName',

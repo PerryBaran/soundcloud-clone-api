@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const request = require('supertest');
 const { User, Album, Song } = require('../../src/models');
 const sinon = require('sinon');
-const { authStub, app } = require('../test-config');
+const app = require('../../src/app');
 
 describe('associations', () => {
   let users;
@@ -38,12 +38,12 @@ describe('associations', () => {
         Album.create({
           name: 'album1',
           UserId: users[0].id,
-          url: `album1.com/${users[0].id}/random1`
+          url: `album1.com/${users[0].id}/random1`,
         }),
         Album.create({
           name: 'album2',
           UserId: users[1].id,
-          url: `album2.com/${users[1].id}/random2`
+          url: `album2.com/${users[1].id}/random2`,
         }),
       ]);
 
@@ -77,7 +77,7 @@ describe('associations', () => {
     try {
       await User.destroy({ where: {} });
       await Album.destroy({ where: {} });
-      await Song.destroy({ where: { }});
+      await Song.destroy({ where: {} });
     } catch (err) {
       console.error(err);
     }
@@ -89,11 +89,15 @@ describe('associations', () => {
 
       body.forEach((user) => {
         user.Albums.forEach((album) => {
-          const expectedAlbum = albums.find((item) => item.UserId === user.id && item.id === album.id);
+          const expectedAlbum = albums.find(
+            (item) => item.UserId === user.id && item.id === album.id
+          );
 
           expect(album.name).to.equal(expectedAlbum.name);
           album.Songs.forEach((song) => {
-            const expectedSong = songs.find((item) => item.AlbumId === album.id && item.id === song.id);
+            const expectedSong = songs.find(
+              (item) => item.AlbumId === album.id && item.id === song.id
+            );
 
             expect(song.name).to.equal(expectedSong.name);
           });
@@ -112,7 +116,9 @@ describe('associations', () => {
         expect(expectedUser.name).to.equal(album.User.name);
 
         album.Songs.forEach((song) => {
-          const expectedSong = songs.find((item) => item.AlbumId === album.id && song.id === item.id);
+          const expectedSong = songs.find(
+            (item) => item.AlbumId === album.id && song.id === item.id
+          );
 
           expect(expectedSong.name).to.equal(song.name);
         });
@@ -126,7 +132,9 @@ describe('associations', () => {
 
       body.forEach((song) => {
         const expectedAlbum = albums.find((album) => album.id === song.AlbumId);
-        const expectedUser = users.find((user) => user.id === song.Album.UserId);
+        const expectedUser = users.find(
+          (user) => user.id === song.Album.UserId
+        );
 
         expect(expectedAlbum.name).to.equal(song.Album.name);
         expect(expectedUser.name).to.equal(song.Album.User.name);

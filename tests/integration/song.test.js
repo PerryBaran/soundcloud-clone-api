@@ -9,7 +9,6 @@ describe('/songs', () => {
   let fakeResolve;
   let user;
   let album;
-  let song;
   let validData;
 
   before(async () => {
@@ -188,7 +187,9 @@ describe('/songs', () => {
 
       it('returns queried song by name', async () => {
         const song = songs[0];
-        const { status, body } = await request(app).get(`/songs?name=${song.name}`);
+        const { status, body } = await request(app).get(
+          `/songs?name=${song.name}`
+        );
 
         expect(status).to.equal(200);
         expect(body.length).to.equal(1);
@@ -225,8 +226,10 @@ describe('/songs', () => {
       describe('PATCH /songs/:songId', () => {
         it('edits song with specified id', async () => {
           const newName = 'newName';
-          const song = songs[0]
-          const { status } = await request(app).patch(`/songs/${song.id}`).field('name', newName);
+          const song = songs[0];
+          const { status } = await request(app)
+            .patch(`/songs/${song.id}`)
+            .field('name', newName);
           const updatedSongRecord = await Song.findByPk(song.id, {
             raw: true,
           });
@@ -237,7 +240,9 @@ describe('/songs', () => {
 
         it('returns 404 if no song exists with the specified id', async () => {
           const newName = 'newName';
-          const { status, body } = await request(app).patch('/songs/9999').field('name', newName);
+          const { status, body } = await request(app)
+            .patch('/songs/9999')
+            .field('name', newName);
 
           expect(status).to.equal(404);
           expect(body.message).to.equal('The song could not be found');

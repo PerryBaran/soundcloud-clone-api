@@ -41,7 +41,8 @@ exports.patch = async (req, res) => {
       raw: true,
     });
 
-    if(!album) return res.status(404).send({ message: "The album could not be found"});
+    if (!album)
+      return res.status(404).send({ message: 'The album could not be found' });
 
     if (album.UserId != id)
       return res.status(401).send({ message: 'Invalid Credentials' });
@@ -63,7 +64,8 @@ exports.delete = async (req, res) => {
       raw: true,
     });
 
-    if(!album) return res.status(404).send({ message: "The album could not be found"});
+    if (!album)
+      return res.status(404).send({ message: 'The album could not be found' });
 
     await helpers.delete(album.url, id, albumId, res, 'album');
   } catch (err) {

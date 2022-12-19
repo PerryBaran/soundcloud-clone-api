@@ -26,7 +26,7 @@ describe('/albums', () => {
         password: 'validPassword',
       };
       user = await User.create(fakeUserData);
-      fakeResolve = `url.com/${user.id}/randomstring`
+      fakeResolve = `url.com/${user.id}/randomstring`;
       sinon.stub(s3, 'uploadFile').resolves(fakeResolve);
       authStub.callsFake((req, _, next) => {
         req.user = { id: user.id };
@@ -138,7 +138,9 @@ describe('/albums', () => {
 
       it('returns queried album by name', async () => {
         const album = albums[0];
-        const { status, body } = await request(app).get(`/albums?name=${album.name}`);
+        const { status, body } = await request(app).get(
+          `/albums?name=${album.name}`
+        );
 
         expect(status).to.equal(200);
         expect(body.length).to.equal(1);
@@ -177,8 +179,10 @@ describe('/albums', () => {
       describe('PATCH /albums/:albumId', () => {
         it('edits album with specified id', async () => {
           const newName = 'newName';
-          const album = albums[0]
-          const { status } = await request(app).patch(`/albums/${album.id}`).field('name', newName);
+          const album = albums[0];
+          const { status } = await request(app)
+            .patch(`/albums/${album.id}`)
+            .field('name', newName);
           const updatedAlbumRecord = await Album.findByPk(album.id, {
             raw: true,
           });
@@ -189,7 +193,9 @@ describe('/albums', () => {
 
         it('returns 404 if no album exists with the specified id', async () => {
           const newName = 'newName';
-          const { status, body } = await request(app).patch('/albums/9999').field('name', newName);
+          const { status, body } = await request(app)
+            .patch('/albums/9999')
+            .field('name', newName);
 
           expect(status).to.equal(404);
           expect(body.message).to.equal('The album could not be found');

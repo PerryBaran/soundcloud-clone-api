@@ -63,7 +63,6 @@ exports.deleteDirectory = async (directory) => {
       return { Key };
     });
 
-    console.log(Objects);
 
     const deleteParms = {
       Bucket,
@@ -72,7 +71,6 @@ exports.deleteDirectory = async (directory) => {
 
     await myBucket.deleteObjects(deleteParms).promise();
   } catch (err) {
-    console.error(err);
     throw new Error(err);
   }
 };

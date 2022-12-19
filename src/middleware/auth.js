@@ -45,7 +45,6 @@ exports.checkCredentials = async (req, res, next) => {
 
     next();
   } catch (err) {
-    console.message(err);
     res.status(500).send({ message: `Server error: ${err.message}` });
   }
 };

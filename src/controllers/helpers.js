@@ -86,6 +86,9 @@ exports.readAll = async (query, res, model) => {
   if (query.name) {
     options.where = { name: query.name }
   }
+  if (query.limit) {
+    options.limit = query.limit
+  }
 
   try {
     const response = await Model.findAll(options);

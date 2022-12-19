@@ -249,6 +249,13 @@ describe('/users', () => {
         expect(body.length).to.equal(1);
         expect(body[0].id).to.equal(user.id);
       });
+
+      it('returns limited results by query', async () => {
+        const { status, body } = await request(app).get('/users?limit=1');
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(1);
+      });
     });
 
     describe('/users/:userId', () => {

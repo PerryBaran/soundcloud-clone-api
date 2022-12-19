@@ -9,9 +9,10 @@ exports.create = async (req, res) => {
   }
 };
 
-exports.readAll = async (_, res) => {
+exports.readAll = async (req, res) => {
+  const { query } = req;
   try {
-    await helpers.readAll(res, 'album');
+    await helpers.readAll(query, res, 'album');
   } catch (err) {
     console.error(err);
   }

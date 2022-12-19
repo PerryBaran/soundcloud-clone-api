@@ -137,6 +137,15 @@ describe('/albums', () => {
           expect(album.id).to.equal(expected.id);
         });
       });
+
+      it('returns queried album by name', async () => {
+        const album = albums[0];
+        const { status, body } = await request(app).get(`/albums?name=${album.name}`);
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(1);
+        expect(body[0].id).to.equal(album.id);
+      });
     });
 
     describe('/albums/:albumId', () => {

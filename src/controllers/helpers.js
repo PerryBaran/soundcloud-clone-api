@@ -80,9 +80,12 @@ exports.createFile = async (req, res, model) => {
   }
 };
 
-exports.readAll = async (res, model) => {
+exports.readAll = async (query, res, model) => {
   const Model = getModel(model);
   const options = getOptions(model);
+  if (query.name) {
+    options.where = { name: query.name }
+  }
 
   try {
     const response = await Model.findAll(options);

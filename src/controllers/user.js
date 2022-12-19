@@ -74,9 +74,11 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.readAll = async (_, res) => {
+exports.readAll = async (req, res) => {
+  const { query } = req;
+
   try {
-    await helpers.readAll(res, 'user');
+    await helpers.readAll(query, res, 'user');
   } catch (err) {
     console.error(err);
   }

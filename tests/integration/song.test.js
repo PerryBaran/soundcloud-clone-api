@@ -186,6 +186,15 @@ describe('/songs', () => {
           expect(song.id).to.equal(expected.id);
         });
       });
+
+      it('returns queried song by name', async () => {
+        const song = songs[0];
+        const { status, body } = await request(app).get(`/songs?name=${song.name}`);
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(1);
+        expect(body[0].id).to.equal(song.id);
+      });
     });
 
     describe('/songs/:songId', () => {

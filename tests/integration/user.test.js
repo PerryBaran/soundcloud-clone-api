@@ -161,7 +161,7 @@ describe('/users', () => {
         data = [];
         users = [];
         const data1 = {
-          name: 'validName',
+          name: 'validName1',
           email: 'valid@email.com',
           password: 'validPassword',
         };

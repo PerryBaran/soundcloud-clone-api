@@ -14,6 +14,6 @@ const fileFilter = (_, file, cb) => {
   }
 };
 
-const storeInMemory = multer({ storage: multer.memoryStorage(), fileFilter });
+const storeInMemory = multer({ storage: multer.memoryStorage(), fileFilter, limit: { filesize: 100000000 } });
 
 module.exports = storeInMemory;

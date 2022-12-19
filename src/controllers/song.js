@@ -36,15 +36,19 @@ exports.patch = async (req, res) => {
   } = req;
 
   try {
-    const { AlbumId } = await Song.findByPk(songId, {
+    const song = await Song.findByPk(songId, {
       raw: true,
     });
 
-    const { UserId } = await Album.findByPk(AlbumId, {
+    if (!song) return res.status(404).send({ message: "The song could not be found"});
+
+    const album = await Album.findByPk(song.AlbumId, {
       raw: true,
     });
 
-    if (UserId != id)
+    if (!album) return res.status(404).send({ message: "The album could not be found"});
+
+    if (album.UserId != id)
       return res.status(401).send({ message: 'Invalid Credentials' });
 
     await helpers.patch(body, songId, res, 'song', file);
@@ -60,11 +64,13 @@ exports.delete = async (req, res) => {
   } = req;
 
   try {
-    const { url } = await Song.findByPk(songId, {
+    const song  = await Song.findByPk(songId, {
       raw: true,
     });
 
-    await helpers.delete(url, id, songId, res, 'song');
+    if(!song) return res.status(404).send({ message: "The album could not be found"});
+
+    await helpers.delete(song.url, id, songId, res, 'song');
   } catch (err) {
     console.error(err);
   }

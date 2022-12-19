@@ -6,8 +6,9 @@ const sinon = require('sinon');
 const { authStub, app } = require('../test-config');
 
 describe('/songs', () => {
-  const fakeResolve = 'fake url';
-  let album;
+  let fakeResolve;
+  let user;
+  let song;
   let validData;
 
   before(async () => {
@@ -21,7 +22,7 @@ describe('/songs', () => {
   });
 
   beforeEach(async () => {
-    sinon.stub(s3, 'uploadFile').resolves(fakeResolve);
+    
 
     try {
       const fakeUserData = {
@@ -29,21 +30,23 @@ describe('/songs', () => {
         email: 'valid@email.com',
         password: 'validPassword',
       };
-      const user = await User.create(fakeUserData);
+      user = await User.create(fakeUserData);
 
       const fakeAlbumData = {
         name: 'validName',
         url: 'validKey',
         UserId: user.id,
       };
-      album = await Album.create(fakeAlbumData);
+      song = await Album.create(fakeAlbumData);
 
       validData = {
         name: 'validName',
         position: 0,
-        AlbumId: album.id,
+        AlbumId: song.id,
       };
 
+      fakeResolve = `url.com/${user.id}/fakeResolve`;
+      sinon.stub(s3, 'uploadFile').resolves(fakeResolve);
       authStub.callsFake((req, _, next) => {
         req.user = { id: user.id };
         next();
@@ -112,7 +115,7 @@ describe('/songs', () => {
       );
     });
 
-    it("returns 404 if AlbumId doesn't match an album of a valid User", async () => {
+    it("returns 404 if AlbumId doesn't match an song of a valid User", async () => {
       const { status, body } = await request(app)
         .post('/songs')
         .field('name', validData.name)
@@ -158,14 +161,14 @@ describe('/songs', () => {
       songs = await Promise.all([
         Song.create({
           name: 'fakeName1',
-          AlbumId: album.id,
-          url: 'fakeUrl1',
+          AlbumId: song.id,
+          url: `url.com/${user.id}/fakeUrl1`,
           position: 0,
         }),
         Song.create({
           name: 'fakeName2',
-          AlbumId: album.id,
-          url: 'fakeUrl2',
+          AlbumId: song.id,
+          url: `url.com/${user.id}/fakeUrl2`,
           position: 1,
         }),
       ]);
@@ -201,6 +204,47 @@ describe('/songs', () => {
 
           expect(status).to.equal(404);
           expect(body.message).to.equal('The song could not be found.');
+        });
+      });
+
+      describe('PATCH /songs/:songId', () => {
+        it('edits song with specified id', async () => {
+          const newName = 'newName';
+          const song = songs[0]
+          const { status } = await request(app).patch(`/songs/${song.id}`).field('name', newName);
+          const updatedSongRecord = await Song.findByPk(song.id, {
+            raw: true,
+          });
+
+          expect(status).to.equal(200);
+          expect(updatedSongRecord.name).to.equal(newName);
+        });
+
+        it('returns 404 if no song exists with the specified id', async () => {
+          const newName = 'newName';
+          const { status, body } = await request(app).patch('/songs/9999').field('name', newName);
+
+          expect(status).to.equal(404);
+          expect(body.message).to.equal('The song could not be found');
+        });
+      });
+
+      describe('DELETE /songs/:songId', () => {
+        it('deletes song with specified id', async () => {
+          const { id } = songs[0];
+          const { status } = await request(app).delete(`/songs/${id}`);
+          const deletedSongRecord = await Song.findByPk(id, {
+            raw: true,
+          });
+
+          expect(status).to.equal(204);
+          expect(deletedSongRecord).to.be.null;
+        });
+
+        it('returns 404 if no song exists with the specified id', async () => {
+          const { status } = await request(app).delete('/songs/9999');
+
+          expect(status).to.equal(404);
         });
       });
     });

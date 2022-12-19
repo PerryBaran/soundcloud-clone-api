@@ -11,7 +11,7 @@ describe('/users', () => {
     try {
       await User.sequelize.sync();
     } catch (err) {
-      console.message('that annoying error');
+      console.error(err);
     }
   });
 
@@ -20,7 +20,7 @@ describe('/users', () => {
       await User.destroy({ where: {} });
       sinon.restore();
     } catch (err) {
-      console.message(err);
+      console.error(err);
     }
   });
 
@@ -161,7 +161,7 @@ describe('/users', () => {
         data = [];
         users = [];
         const data1 = {
-          name: 'validName1',
+          name: 'validName',
           email: 'valid@email.com',
           password: 'validPassword',
         };
@@ -242,7 +242,7 @@ describe('/users', () => {
       });
 
       it('returns queried user by name', async () => {
-        const user = users[0];
+        const user = users[1];
         const { status, body } = await request(app).get(
           `/users?name=${user.name}`
         );
@@ -250,6 +250,25 @@ describe('/users', () => {
         expect(status).to.equal(200);
         expect(body.length).to.equal(1);
         expect(body[0].id).to.equal(user.id);
+      });
+
+      it('returns all queried users that match name', async () => {
+        const { status, body } = await request(app).get(
+          `/users?name=validName`
+        );
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(2);
+      });
+
+      it('return exact name match if exact is true', async () => {
+        const { status, body } = await request(app).get(
+          `/users?name=validName&exact=true`
+        );
+
+        expect(status).to.equal(200);
+        expect(body.length).to.equal(1);
+        expect(body[0].id).to.equal(users[0].id);
       });
 
       it('returns limited results by query', async () => {

@@ -63,7 +63,6 @@ exports.deleteDirectory = async (directory) => {
       return { Key };
     });
 
-
     const deleteParms = {
       Bucket,
       Delete: { Objects },

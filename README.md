@@ -1,10 +1,10 @@
 # Soundcloud-Clone-API
 
-An Express.js API that interacts with a sequelize database via CRUD requests to store and interact with user, album and song information. AWS S3 to be implemented to store audio and image data.
+An Express.js API that interacts with a sequelize database via CRUD requests to store and interact with user, album and song information. AWS S3 implemented to store audio and image data.
 
 Implements Test-Driven development using Mocha and Chai.
 
-Created as part of the Manchester Codes full-stack web development boot-camp.
+Created for the Manchester Codes full-stack web development boot-camp final project.
 
 ## Table of Contents
 
@@ -39,6 +39,12 @@ Created as part of the Manchester Codes full-stack web development boot-camp.
 
 ## Setup
 
+### Clone Repo to a local file
+
+```
+$ git clone git@github.com:PerryBaran/soundcloud-clone-api.git
+```
+
 ### Install Dependencies
 
 ```
@@ -57,28 +63,21 @@ $ docker run --name postgres -p 5432:5432 -e POSTGRES_PASSWORD=password -d postg
 
 You will need to create a file to store your environment variables. These credentials allow you to connect to the database. Two environments will need to be created, one for production and one for testing.
 
-Create a `.env` file in the root of the repo with the following values:
+Create a `.env` and a `.env.test` file in the root of the repo with values that meet the requirements:
 
 ```
-PGUSER=postgres
-PGHOST=localhost
-PGPASSWORD=password
-PGDATABASE=music_library_dev
-PGPORT=5432
-PORT=4000
-SECRETKEY=[random string of characters]
-```
-
-Create a `.env.test` file in the root of the repo with the following values:
-
-```
-PGUSER=postgres
-PGHOST=localhost
-PGPASSWORD=password
-PGDATABASE=music_library_test
-PGPORT=5432
-PORT=4000
-SECRETKEY=[random string of characters]
+PGUSER=[server name]
+PGHOST=[host e.g. localhost]
+PGPASSWORD=[server password]
+PGDATABASE=[database name]
+PGPORT=[Postgres connection port]
+PORT=[local port]
+JWT_SECRETKEY=[random string of characters]
+AWS_ACCESS_KEY_ID=[AWS S3 Bucket access key]
+AWS_SECRET_KEY=[AWS S3 Bucket secret key]
+AWS_BUCKET_NAME=[AWS S3 Bucket name]
+AWS_BUCKET_REGION=[AWS S3 Bucket region]
+AWS_BUCKET_URL=[AWS S3 Bucket url]
 ```
 
 ## Commands
@@ -95,12 +94,6 @@ To run all tests use:
 $ npm test
 ```
 
-To only run unit tests use:
-
-```
-$ npm run unit-test
-```
-
 To run Prettier use:
 
 ```
@@ -108,6 +101,39 @@ $ npm run prettier
 ```
 
 ## Routes
+
+<sub>**?** In Schema represents optional field</sub>
+
+### /users
+
+| Method | Route                    | Description                                                                                                         | Schema (JSON)                                                                          |
+| ------ | ------------------------ | ------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| POST   | /users/signup            | Create a new user and returns a cookie containing the new users name and id                                         | <pre>{<br /> "name": STRING,<br /> "email": STRING,<br /> "password": STRING<br />}    |
+| POST   | /users/login             | Returns a cookie for containing user name and id for the matching user                                              | <pre>{<br /> "email": STRING,<br /> "password": STRING<br />}                          |
+| Get    | /users                   | Returns all users. Optional query param "name" and "limit" to search by name or limit returned results respectively | N/A                                                                                    |
+| Get    | /users/:userId           | Returns user the with specified ID                                                                                  | N/A                                                                                    |
+| PATCH  | /users/:userId           | Updates user with the specified ID, requires JWT authentication                                                     | <pre>{<br /> "name"?: STRING,<br /> "email"?: STRING,<br /> "password"?: STRING<br />} |
+| DELETE | /users/:userId/:password | Deletes the user with the specified ID if the password matches, requires JWT authentication                         | N/A                                                                                    |
+
+### /albums
+
+| Method | Route            | Description                                                                                                          | Schema (FormData)                                           |
+| ------ | ---------------- | -------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| POST   | /albums          | Creates a new album, requires JWT authenticaiton to link the album to the user                                       | <pre>{<br /> name: STRING,<br /> image?: IMAGE-FILE,<br />} |
+| GET    | /albums          | Returns all albums. Optional query param "name" and "limit" to search by name or limit returned results respectively | N/A                                                         |
+| GET    | /albums/:albumId | Returns album the with specified ID                                                                                  | N/A                                                         |
+| PATCH  | /albums/:albumId | Updates album with the specified ID, requires JWT authentication                                                     | <pre>{<br /> name?:STRING,<br /> image?: IMAGE-FILE,<br />} |
+| DELETE | /albums/:albumId | Deletes the album with the specified ID, requires JWT authentication                                                 | N/A                                                         |
+
+### /songs
+
+| Method | Route          | Description                                                                                                         | Schema (FormData)                                                                                             |
+| ------ | -------------- | ------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| POST   | /songs         | Creates a new song, requires JWT authenticaiton                                                                     | <pre>{<br /> name: STRING,<br /> AlbumId: NUMBER,<br /> position: NUMBER,<br /> audio: AUDIO-FILE,<br />}     |
+| GET    | /songs         | Returns all songs. Optional query param "name" and "limit" to search by name or limit returned results respectively | N/A                                                                                                           |
+| GET    | /songs/:songId | Returns song with the specified ID                                                                                  | N/A                                                                                                           |
+| PATCH  | /songs/:songId | Updates song with the specified ID, requires JWT authentication                                                     | <pre>{<br /> name?: STRING,<br /> AlbumId?: NUMBER,<br /> position?: NUMBER,<br /> audio?: AUDIO-FILE,<br />} |
+| DELETE | /songs/:songId | Deletes the song with the specified ID, requires JWT authentication                                                 | N/A                                                                                                           |
 
 ## Attribution
 

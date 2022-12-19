@@ -36,11 +36,13 @@ exports.patch = async (req, res) => {
   } = req;
 
   try {
-    const { UserId } = await Album.findByPk(albumId, {
+    const album = await Album.findByPk(albumId, {
       raw: true,
     });
 
-    if (UserId != id)
+    if(!album) return res.status(404).send({ message: "The album could not be found"});
+
+    if (album.UserId != id)
       return res.status(401).send({ message: 'Invalid Credentials' });
 
     await helpers.patch(body, albumId, res, 'album', file);
@@ -56,11 +58,13 @@ exports.delete = async (req, res) => {
   } = req;
 
   try {
-    const { url } = await Album.findByPk(albumId, {
+    const album = await Album.findByPk(albumId, {
       raw: true,
     });
 
-    await helpers.delete(url, id, albumId, res, 'album');
+    if(!album) return res.status(404).send({ message: "The album could not be found"});
+
+    await helpers.delete(album.url, id, albumId, res, 'album');
   } catch (err) {
     console.error(err);
   }

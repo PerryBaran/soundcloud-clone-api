@@ -25,6 +25,7 @@ Created for the Manchester Codes full-stack web development boot-camp final proj
 - [AWS-SDK](https://www.npmjs.com/package/aws-sdk)
 - [Multer](https://www.npmjs.com/package/multer)
 - [uuid](https://www.npmjs.com/package/uuid)
+- [cors](https://www.npmjs.com/package/cors)
 
 ### Dev Dependencies
 

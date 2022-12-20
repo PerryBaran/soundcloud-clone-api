@@ -4,12 +4,14 @@ const albumRouter = require('./routes/album');
 const songRouter = require('./routes/song');
 const cookieParser = require('cookie-parser');
 const multer = require('multer');
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(cors());
 
 app.use('/users', userRouter);
 app.use('/albums', albumRouter);

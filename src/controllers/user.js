@@ -28,6 +28,8 @@ exports.signup = async (req, res) => {
         }
       );
 
+      delete user.dataValues.password;
+
       res
         .status(201)
         .cookie('userToken', token, cookieConfig)
@@ -59,6 +61,8 @@ exports.login = async (req, res) => {
             expiresIn: EXPIRES_IN,
           }
         );
+
+        delete user.dataValues.password;
 
         res
           .status(201)

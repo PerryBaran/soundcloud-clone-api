@@ -5,7 +5,7 @@ const helpers = require('./helpers');
 const s3 = require('../aws/s3');
 
 const EXPIRES_IN = 1 * 24 * 60 * 60 * 1000;
-const cookieConfig = { maxAge: EXPIRES_IN, SameSite: 'None', Secure: true};
+const cookieConfig = { maxAge: EXPIRES_IN, sameSite: 'None', secure: true};
 
 exports.signup = async (req, res) => {
   try {

@@ -14,6 +14,7 @@ app.use(cookieParser());
 app.use(cors({
   credentials: true,
   origin: 'https://localhost:3000',
+  exposedHeaders: ['set-cookie'],
 }));
 
 app.use('/users', userRouter);

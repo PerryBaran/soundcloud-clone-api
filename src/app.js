@@ -13,8 +13,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors({
   credentials: true,
-  origin: 'https://perrybaran.github.io',
-  exposedHeaders: ['set-cookie'],
+  origin: 'https://localhost:3000',
+  exposedHeaders: ['set-cookie']
 }));
 
 app.use('/users', userRouter);

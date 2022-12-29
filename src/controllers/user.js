@@ -29,11 +29,9 @@ exports.signup = async (req, res) => {
       );
 
       delete user.dataValues.password;
+      user.userToken = token;
 
-      res
-        .status(201)
-        .cookie('userToken', token, cookieConfig)
-        .send(user);
+      res.status(201).send(user);
     } else {
       res.status(409).send({ message: 'Details are not correct' });
     }
@@ -63,11 +61,9 @@ exports.login = async (req, res) => {
         );
 
         delete user.dataValues.password;
+        user.dataValues.userToken = token;
 
-        res
-          .status(201)
-          .cookie('userToken', token, cookieConfig)
-          .send(user);
+        res.status(201).send(user);
       } else {
         res.status(401).send({ message: 'Authentication failed' });
       }

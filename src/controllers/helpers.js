@@ -152,6 +152,7 @@ exports.patch = async (data, id, res, model, file) => {
       res.status(404).send({ message: `The ${model} could not be found.` });
     }
   } catch (err) {
+    console.log(err);
     res.status(500).send({
       message: err.message ? `Error: ${err.message}` : 'Unexpected error',
     });

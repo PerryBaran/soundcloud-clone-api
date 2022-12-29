@@ -5,7 +5,7 @@ const helpers = require('./helpers');
 const s3 = require('../aws/s3');
 
 const EXPIRES_IN = 1 * 24 * 60 * 60 * 1000;
-const cookieConfig = { maxAge: EXPIRES_IN, sameSite: 'None', secure: true};
+const cookieConfig = { maxAge: EXPIRES_IN, sameSite: 'None', secure: true };
 
 exports.signup = async (req, res) => {
   try {
@@ -29,11 +29,9 @@ exports.signup = async (req, res) => {
       );
 
       delete user.dataValues.password;
+      user.userToken = token;
 
-      res
-        .status(201)
-        .cookie('userToken', token, cookieConfig)
-        .send(user);
+      res.status(201).send(user);
     } else {
       res.status(409).send({ message: 'Details are not correct' });
     }
@@ -63,11 +61,9 @@ exports.login = async (req, res) => {
         );
 
         delete user.dataValues.password;
+        user.dataValues.userToken = token;
 
-        res
-          .status(201)
-          .cookie('userToken', token, cookieConfig)
-          .send(user);
+        res.status(201).send(user);
       } else {
         res.status(401).send({ message: 'Authentication failed' });
       }

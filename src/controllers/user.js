@@ -29,7 +29,7 @@ exports.signup = async (req, res) => {
       );
 
       delete user.dataValues.password;
-      user.userToken = token;
+      user.dataValues.userToken = token;
 
       res.status(201).send(user);
     } else {

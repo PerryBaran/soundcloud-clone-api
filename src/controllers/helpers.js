@@ -86,6 +86,7 @@ exports.createFile = async (req, res, model) => {
 exports.readAll = async (query, res, model) => {
   const Model = getModel(model);
   const options = getOptions(model);
+  options.order = [['createdAt', 'DESC']];
   if (query.name) {
     if (query.exact && query.exact === 'true') {
       options.where = { name: query.name };

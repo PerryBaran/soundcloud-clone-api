@@ -2,6 +2,10 @@ const { Song, Album } = require('../models');
 const helpers = require('./helpers');
 
 exports.create = async (req, res) => {
+  const { file } = req;
+
+  if (!file) return res.status(400).send({ message: 'file required' });
+
   try {
     await helpers.createFile(req, res, 'song');
   } catch (err) {
@@ -51,7 +55,7 @@ exports.patch = async (req, res) => {
     if (!album)
       return res.status(404).send({ message: 'The album could not be found' });
 
-    if (album.UserId != id)
+    if (Number(album.UserId) != Number(id))
       return res.status(401).send({ message: 'Invalid Credentials' });
 
     await helpers.patch(body, songId, res, 'song', file);

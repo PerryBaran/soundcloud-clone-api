@@ -6,6 +6,21 @@ const s3 = require('../aws/s3');
 
 const EXPIRES_IN = 1 * 24 * 60 * 60 * 1000;
 
+const sendToken = (res, user) => {
+  const token = jwt.sign(
+    { id: user.id, name: user.name },
+    process.env.JWT_SECRETKEY,
+    {
+      expiresIn: EXPIRES_IN,
+    }
+  );
+
+  delete user.dataValues.password;
+  user.dataValues.userToken = token;
+
+  res.status(201).send(user);
+};
+
 exports.signup = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -19,18 +34,7 @@ exports.signup = async (req, res) => {
     const user = await User.create(data);
 
     if (user) {
-      const token = jwt.sign(
-        { id: user.id, name: user.name },
-        process.env.JWT_SECRETKEY,
-        {
-          expiresIn: EXPIRES_IN,
-        }
-      );
-
-      delete user.dataValues.password;
-      user.dataValues.userToken = token;
-
-      res.status(201).send(user);
+      sendToken(res, user);
     } else {
       res.status(409).send({ message: 'Details are not correct' });
     }
@@ -51,18 +55,7 @@ exports.login = async (req, res) => {
       const passwordsMatch = await bcrypt.compare(password, user.password);
 
       if (passwordsMatch) {
-        let token = jwt.sign(
-          { id: user.id, name: user.name },
-          process.env.JWT_SECRETKEY,
-          {
-            expiresIn: EXPIRES_IN,
-          }
-        );
-
-        delete user.dataValues.password;
-        user.dataValues.userToken = token;
-
-        res.status(201).send(user);
+        sendToken(res, user);
       } else {
         res.status(401).send({ message: 'Authentication failed' });
       }
@@ -101,7 +94,7 @@ exports.patch = async (req, res) => {
     user: { id },
   } = req;
 
-  if (userId != id)
+  if (Number(userId) !== Number(id))
     return res.status(401).send({ message: 'Invalid Credentials' });
 
   try {
@@ -118,7 +111,7 @@ exports.delete = async (req, res) => {
   } = req;
 
   try {
-    if (id != userId) {
+    if (Number(userId) !== Number(id)) {
       return res.status(401).send({ message: 'Invalid Credentials' });
     }
     const user = await User.unscoped().findByPk(id, {

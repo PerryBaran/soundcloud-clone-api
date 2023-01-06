@@ -22,10 +22,14 @@ const getOptions = (model) => {
             include: [
               {
                 model: Song,
-                order: ['position', 'ASC'],
               },
             ],
           },
+        ],
+        order: [
+          ['createdAt', 'DESC'],
+          [Album, 'createdAt', 'DESC'],
+          [Album, Song, 'position', 'ASC'],
         ],
       };
     case 'album':
@@ -36,8 +40,11 @@ const getOptions = (model) => {
           },
           {
             model: Song,
-            order: ['position', 'ASC'],
           },
+        ],
+        order: [
+          ['createdAt', 'DESC'],
+          [Song, 'position', 'ASC'],
         ],
       };
     case 'song':
@@ -52,6 +59,7 @@ const getOptions = (model) => {
             ],
           },
         ],
+        order: [['createdAt', 'DESC']],
       };
     default:
       return {};
@@ -60,15 +68,13 @@ const getOptions = (model) => {
 
 exports.createFile = async (req, res, model) => {
   const { file, body, user } = req;
-
-  if (!file) return res.status(400).send({ message: 'file required' });
-
   const Model = getModel(model);
 
   try {
-    const url = await s3.uploadFile(file, user.id);
-
-    body.url = url;
+    if (file) {
+      const url = await s3.uploadFile(file, user.id);
+      body.url = url;
+    }
 
     if (model === 'album') {
       body.UserId = user.id;
@@ -86,7 +92,7 @@ exports.createFile = async (req, res, model) => {
 exports.readAll = async (query, res, model) => {
   const Model = getModel(model);
   const options = getOptions(model);
-  options.order = [['createdAt', 'DESC']];
+
   if (query.name) {
     if (query.exact && query.exact === 'true') {
       options.where = { name: query.name };
@@ -140,6 +146,7 @@ exports.patch = async (data, id, res, model, file) => {
       const { url } = await Model.findByPk(id, { raw: true });
       const filePath = url.split('.com/')[1];
       await s3.deleteFile(filePath);
+
       const userId = filePath.split('/')[0];
       const newUrl = await s3.uploadFile(file, userId);
       data.url = newUrl;
@@ -163,7 +170,7 @@ exports.patch = async (data, id, res, model, file) => {
 exports.delete = async (url, userId, id, res, model) => {
   const Model = getModel(model);
   const filePath = url.split('.com/')[1];
-  if (userId != filePath.split('/')[0])
+  if (Number(userId) !== Number(filePath.split('/')[0]))
     return res.status(401).send({ message: 'Invalid Credentials' });
 
   try {

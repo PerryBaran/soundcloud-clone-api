@@ -45,7 +45,7 @@ exports.patch = async (req, res) => {
     if (!album)
       return res.status(404).send({ message: 'The album could not be found' });
 
-    if (album.UserId != id)
+    if (Number(album.UserId) !== Number(id))
       return res.status(401).send({ message: 'Invalid Credentials' });
 
     await helpers.patch(body, albumId, res, 'album', file);

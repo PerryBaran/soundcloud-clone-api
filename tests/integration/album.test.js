@@ -95,13 +95,12 @@ describe('/albums', () => {
       expect(body.message).to.equal('File is wrong type');
     });
 
-    it("returns 400 if the file doesn't exist", async () => {
-      const { status, body } = await request(app)
+    it("file is optional", async () => {
+      const { status } = await request(app)
         .post('/albums')
         .field('name', validData.name);
 
-      expect(status).to.equal(400);
-      expect(body.message).to.equal('file required');
+      expect(status).to.equal(200);
     });
   });
 

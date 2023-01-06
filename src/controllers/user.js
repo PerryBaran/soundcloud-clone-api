@@ -98,9 +98,19 @@ exports.patch = async (req, res) => {
     return res.status(401).send({ message: 'Invalid Credentials' });
 
   try {
-    await helpers.patch(body, userId, res, 'user');
+    const { name, email, password } = body;
+    const data = {
+      name,
+      email,
+      password: password && await bcrypt.hash(password, 10),
+    }
+
+    await helpers.patch(data, id, res, 'user');
   } catch (err) {
-    console.error(err);
+    console.log(err);
+    res.status(500).send({
+      message: err.message ? `Error: ${err.message}` : 'Unexpected error',
+    });
   }
 };
 

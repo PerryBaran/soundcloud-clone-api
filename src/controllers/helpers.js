@@ -138,16 +138,17 @@ exports.readById = async (id, res, model) => {
   }
 };
 
-exports.patch = async (data, id, res, model, file) => {
+exports.patch = async (data, id, res, model, file, userId) => {
   const Model = getModel(model);
 
   try {
     if (file) {
       const { url } = await Model.findByPk(id, { raw: true });
-      const filePath = url.split('.com/')[1];
-      await s3.deleteFile(filePath);
-
-      const userId = filePath.split('/')[0];
+      if (url) {
+        const filePath = url.split('.com/')[1];
+        await s3.deleteFile(filePath);
+      }
+      
       const newUrl = await s3.uploadFile(file, userId);
       data.url = newUrl;
     }
@@ -169,12 +170,16 @@ exports.patch = async (data, id, res, model, file) => {
 
 exports.delete = async (url, userId, id, res, model) => {
   const Model = getModel(model);
-  const filePath = url.split('.com/')[1];
-  if (Number(userId) !== Number(filePath.split('/')[0]))
-    return res.status(401).send({ message: 'Invalid Credentials' });
 
   try {
-    await s3.deleteFile(filePath);
+    if (url) {
+      const filePath = url.split('.com/')[1];
+      if (Number(userId) !== Number(filePath.split('/')[0]))
+        return res.status(401).send({ message: 'Invalid Credentials' });
+
+      await s3.deleteFile(filePath);
+    }
+
     const deletedRows = await Model.destroy({ where: { id } });
 
     if (!deletedRows) {

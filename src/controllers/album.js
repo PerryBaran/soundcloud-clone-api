@@ -48,7 +48,7 @@ exports.patch = async (req, res) => {
     if (Number(album.UserId) !== Number(id))
       return res.status(401).send({ message: 'Invalid Credentials' });
 
-    await helpers.patch(body, albumId, res, 'album', file);
+    await helpers.patch(body, albumId, res, 'album', file, id);
   } catch (err) {
     console.error(err);
   }

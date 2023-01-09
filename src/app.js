@@ -14,7 +14,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: ['https://localhost:3000', 'http://localhost:3000'],
+    origin: ['https://localhost:3000', 'http://localhost:3000', 'https://ngiannotta84.github.io'],
     exposedHeaders: ['set-cookie'],
   })
 );

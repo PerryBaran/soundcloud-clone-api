@@ -1,5 +1,11 @@
 module.exports = (connection, DataTypes) => {
   const schema = {
+    id : {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -31,7 +37,7 @@ module.exports = (connection, DataTypes) => {
       },
     },
     position: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       allowEmpty: false,
       validate: {
@@ -41,7 +47,7 @@ module.exports = (connection, DataTypes) => {
         },
         notEmpty: {
           args: true,
-          msg: 'The provide a song position',
+          msg: 'The position cannot be empty',
         },
       },
     },

@@ -66,18 +66,14 @@ const getOptions = (model) => {
   }
 };
 
-exports.createFile = async (req, res, model) => {
-  const { file, body, user } = req;
+exports.createFile = async (req, res, directory, model) => {
+  const { file, body } = req;
   const Model = getModel(model);
 
   try {
     if (file) {
-      const url = await s3.uploadFile(file, user.id);
+      const url = await s3.uploadFile(file, directory);
       body.url = url;
-    }
-
-    if (model === 'album') {
-      body.UserId = user.id;
     }
 
     const response = await Model.create(body);
@@ -138,7 +134,7 @@ exports.readById = async (id, res, model) => {
   }
 };
 
-exports.patch = async (data, id, res, model, file, userId) => {
+exports.patch = async (data, id, res, model, file, directory) => {
   const Model = getModel(model);
 
   try {
@@ -149,7 +145,7 @@ exports.patch = async (data, id, res, model, file, userId) => {
         await s3.deleteFile(filePath);
       }
       
-      const newUrl = await s3.uploadFile(file, userId);
+      const newUrl = await s3.uploadFile(file, directory);
       data.url = newUrl;
     }
 
@@ -168,18 +164,10 @@ exports.patch = async (data, id, res, model, file, userId) => {
   }
 };
 
-exports.delete = async (url, userId, id, res, model) => {
+exports.delete = async (id, res, model) => {
   const Model = getModel(model);
 
   try {
-    if (url) {
-      const filePath = url.split('.com/')[1];
-      if (Number(userId) !== Number(filePath.split('/')[0]))
-        return res.status(401).send({ message: 'Invalid Credentials' });
-
-      await s3.deleteFile(filePath);
-    }
-
     const deletedRows = await Model.destroy({ where: { id } });
 
     if (!deletedRows) {

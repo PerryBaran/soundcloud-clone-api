@@ -94,7 +94,7 @@ exports.patch = async (req, res) => {
     user: { id },
   } = req;
 
-  if (Number(userId) !== Number(id))
+  if (userId !== id)
     return res.status(401).send({ message: 'Invalid Credentials' });
 
   try {
@@ -121,7 +121,7 @@ exports.delete = async (req, res) => {
   } = req;
 
   try {
-    if (Number(userId) !== Number(id)) {
+    if (userId !== id) {
       return res.status(401).send({ message: 'Invalid Credentials' });
     }
     const user = await User.unscoped().findByPk(id, {
@@ -138,13 +138,7 @@ exports.delete = async (req, res) => {
 
     await s3.deleteDirectory(userId);
 
-    const deletedRows = await User.destroy({ where: { id } });
-
-    if (!deletedRows) {
-      res.status(404).json({ message: 'The User could not be found.' });
-    } else {
-      res.status(204).send();
-    }
+    await helpers.delete(userId, res, 'user')
   } catch (err) {
     res.status(500).send({
       message: err.message ? `Error: ${err.message}` : 'Unexpected error',

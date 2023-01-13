@@ -1,13 +1,21 @@
 const { Song, Album } = require('../models');
+const s3 = require('../aws/s3');
 const helpers = require('./helpers');
 
 exports.create = async (req, res) => {
-  const { file } = req;
+  const { file, user, body } = req;
 
   if (!file) return res.status(400).send({ message: 'file required' });
 
+  const album = await Album.findByPk(body.AlbumId, {
+    raw: true,
+  });
+
+  if (album.UserId !== user.id) return res.status(400).send({ message: 'Invalid credentials' });
+  const directory = `${user.id}/${body.AlbumId}`;
+
   try {
-    await helpers.createFile(req, res, 'song');
+    await helpers.createFile(req, res, directory, 'song');
   } catch (err) {
     console.error(err);
   }
@@ -55,10 +63,11 @@ exports.patch = async (req, res) => {
     if (!album)
       return res.status(404).send({ message: 'The album could not be found' });
 
-    if (Number(album.UserId) != Number(id))
+    if (album.UserId !== id)
       return res.status(401).send({ message: 'Invalid Credentials' });
-
-    await helpers.patch(body, songId, res, 'song', file, id);
+ 
+    const directory = `${id}/${song.AlbumId}`;
+    await helpers.patch(body, songId, res, 'song', file, directory);
   } catch (err) {
     console.error(err);
   }
@@ -78,7 +87,15 @@ exports.delete = async (req, res) => {
     if (!song)
       return res.status(404).send({ message: 'The album could not be found' });
 
-    await helpers.delete(song.url, id, songId, res, 'song');
+    if (song.url) {
+      const filePath = song.url.split('.com/')[1];
+      if (id !== filePath.split('/')[0])
+        return res.status(401).send({ message: 'Invalid Credentials' });
+
+      await s3.deleteFile(filePath);
+    }
+
+    await helpers.delete(songId, res, 'song');
   } catch (err) {
     console.error(err);
   }

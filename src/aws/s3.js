@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const { v4 } = require('uuid');
+const { v4: uuid } = require('uuid');
 
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -10,23 +10,23 @@ const myBucket = new AWS.S3();
 
 const Bucket = process.env.AWS_BUCKET_NAME;
 
-exports.uploadFile = (file, userId) => {
-  if (!userId) throw new Error('UserId undefined');
+exports.uploadFile = (file, directory) => {
+  if (!directory) throw new Error('filepath undefined');
 
   return new Promise((resolve, reject) => {
-    const key = `${userId}/${v4()}`;
+    const filepath = `${directory}/${uuid()}`;
 
     const params = {
       Body: file.buffer,
       Bucket,
-      Key: key,
+      Key: filepath,
     };
 
     myBucket.putObject(params, (err) => {
       if (err) {
         reject(err);
       } else {
-        resolve(`${process.env.AWS_BUCKET_URL}/${key}`);
+        resolve(`${process.env.AWS_BUCKET_URL}/${filepath}`);
       }
     });
   });

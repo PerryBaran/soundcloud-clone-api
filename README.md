@@ -6,7 +6,7 @@ Implements Test-Driven development using Mocha and Chai.
 
 Created for the Command Shit (formally Manchester Codes) full-stack web development boot-camp final project.
 
-[Front-End Reporsitory](https://github.com/ngiannotta84/soundcloud-clone)
+[Front-End Repository](https://github.com/ngiannotta84/soundcloud-clone)
 
 ## Table of Contents
 

@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.route('/').get(userController.readAll);
 
+/*
 router
   .route('/:userId')
   .get(userController.readById)
@@ -16,6 +17,7 @@ router.delete(
   auth.authenticateToken,
   userController.delete
 );
+*/
 
 router.post('/signup', auth.checkCredentials, userController.signup);
 
